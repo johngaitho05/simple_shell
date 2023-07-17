@@ -5,6 +5,13 @@
 
 extern char** environ;
 
+
+/**
+ * _strtok_helper - computes the next substring given the buffer string and the delimiters
+ * @s: the string from which to extract a substring
+ * @delim: tokens on which to split the input string
+ * Return: the next substring matching the split criteria
+ */
 char *_strtok_helper(char *s, const char *delim)
 {
 	register char *spanp;
@@ -98,13 +105,23 @@ void _puts(char *str)
 	write(STDOUT_FILENO, "\n", 1);
 }
 
-int panic(char *s)
+/**
+ * panic - prints an error message and exist the process
+ * @msg: the error message to print
+ * Return: 1 to indicate fail
+ */
+int panic(char *msg)
 {
-	_puts(s);
+	_puts(msg);
 	puts("\n");
 	exit(1);
 }
 
+/**
+ * get_absolute_path - given a command name, this function finds the absolute path to the executable
+ * @command: name of the command (str)
+ * Return: absolute path to the executable
+ */
 char* get_absolute_path(const char* command) {
 	FILE* pipe;
 	char* result = NULL;
@@ -132,6 +149,13 @@ char* get_absolute_path(const char* command) {
 	return result;
 }
 
+/**
+ * _strtok - splits a string in to substrings based on the
+ * specified delimiters and stores the result in an array
+ * @buffer: the string to split
+ * @delim: the delimiters (a string)
+ * Return: an array of substrings
+ */
 char **_strtok(char *buffer, const char *delim)
 {
 	int count = 0, size = 100, bytes_count = 0, required, length;
@@ -173,6 +197,8 @@ int main(void) {
 	command = _strtok(buffer, " ");
 
 	command[0] = get_absolute_path(command[0]);
+	if (!command[0])
+		panic("command not found");
 	child_pid = fork();
 	if (child_pid == 0)
 		if (execve(command[0], command, environ) == -1)
