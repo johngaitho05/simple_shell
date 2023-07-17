@@ -100,8 +100,9 @@ void _puts(char *str)
 {
 	int len;
 
-	for (len = 0; str[len] != '\0'; len++)
-		write(STDOUT_FILENO, str, len);
+	for (len = 0; str[len] != '\0'; len++);
+
+	write(STDOUT_FILENO, str, len);
 	write(STDOUT_FILENO, "\n", 1);
 }
 
@@ -198,11 +199,12 @@ int main(void)
 	pid_t child_pid;
 	char **command;
 	int status;
-
 	char *line = NULL;
+
 	size_t len = 0;
 	printf("$");
-	while (getline(&line, &len, stdin) != -1) {
+	while (getline(&line, &len, stdin) != -1)
+	{
 		printf("$");
 		if (line[0] == '\0' || line[0] == '\n')
 			continue;
