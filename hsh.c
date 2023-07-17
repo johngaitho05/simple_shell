@@ -196,20 +196,28 @@ int main(void)
 {
 
 	pid_t child_pid;
-	char **command, buffer[] = "ls";
+	char **command;
 	int status;
 
-	command = _strtok(buffer, " ");
+	char *line = NULL;
+	size_t len = 0;
+	printf("$");
+	while (getline(&line, &len, stdin) != -1) {
+		printf("$");
+		if (line[0] == '\0' || line[0] == '\n')
+			continue;
+		command = _strtok(line, " ");
+		command[0] = get_absolute_path(command[0]);
+		if (!command[0])
+			panic("command not found");
+		child_pid = fork();
+		if (child_pid == 0)
+			if (execve(command[0], command, environ) == -1)
+				panic("execve failed!");
 
-	command[0] = get_absolute_path(command[0]);
-	if (!command[0])
-		panic("command not found");
-	child_pid = fork();
-	if (child_pid == 0)
-		if (execve(command[0], command, environ) == -1)
-			panic("execve failed!");
-
-	wait(&status);
-	free(command);
+		wait(&status);
+		free(command);
+	}
+	free(line);
 	return (0);
 }
