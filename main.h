@@ -19,4 +19,6 @@ void _strip(char *str);
 void _puts(char *str);
 char **_strtok(char *buffer, const char *delim);
 
+extern char **environ;
+
 #endif

@@ -1,13 +1,11 @@
 #include "main.h"
 
-
 #define MAX_PATH_LENGTH 4096
-
-extern char** environ;
 
 
 /**
- * _strtok_helper - computes the next substring given the buffer string and the delimiters
+ * _strtok_helper - computes the next substring
+ * given the buffer string and the delimiters
  * @s: the string from which to extract a substring
  * @delim: tokens on which to split the input string
  * Return: the next substring matching the split criteria
@@ -18,6 +16,7 @@ char *_strtok_helper(char *s, const char *delim)
 	register int c, sc;
 	char *tok;
 	static char *last;
+
 	if (s == NULL && (s = last) == NULL)
 		return (NULL);
 	cont:
@@ -27,12 +26,14 @@ char *_strtok_helper(char *s, const char *delim)
 		if (c == sc)
 			goto cont;
 	}
-	if (c == 0) {
+	if (c == 0)
+	{
 		last = NULL;
 		return (NULL);
 	}
 	tok = s - 1;
-	for (;;) {
+	for (;;)
+	{
 		c = *s++;
 		spanp = (char *)delim;
 		do {
@@ -99,9 +100,8 @@ void _puts(char *str)
 {
 	int len;
 
-	for (len = 0; str[len] != '\0'; len++);
-
-	write(STDOUT_FILENO, str, len);
+	for (len = 0; str[len] != '\0'; len++)
+		write(STDOUT_FILENO, str, len);
 	write(STDOUT_FILENO, "\n", 1);
 }
 
@@ -118,26 +118,30 @@ int panic(char *msg)
 }
 
 /**
- * get_absolute_path - given a command name, this function finds the absolute path to the executable
+ * get_absolute_path - given a command name,
+ * this function finds the absolute path to the executable
  * @command: name of the command (str)
  * Return: absolute path to the executable
  */
-char* get_absolute_path(const char* command) {
-	FILE* pipe;
-	char* result = NULL;
+char *get_absolute_path(const char *command)
+{
+	FILE *pipe;
+	char *result = NULL;
 	char buffer[MAX_PATH_LENGTH];
-
 	char cmd[MAX_PATH_LENGTH + 20];
-	snprintf(cmd, sizeof(cmd), "which %s", command);
 
+	snprintf(cmd, sizeof(cmd), "which %s", command);
 	pipe = popen(cmd, "r");
-	if (pipe == NULL) {
+	if (pipe == NULL)
+	{
 		perror("popen");
-		return NULL;
+		return (NULL);
 	}
-	if (fgets(buffer, sizeof(buffer), pipe) != NULL) {
-		size_t len = strlen(buffer);
-		if (len > 0 && buffer[len - 1] == '\n') {
+	if (fgets(buffer, sizeof(buffer), pipe) != NULL)
+	{
+		size_t len = _strlen(buffer);
+		if (len > 0 && buffer[len - 1] == '\n')
+		{
 			buffer[len - 1] = '\0';
 		}
 
@@ -146,7 +150,7 @@ char* get_absolute_path(const char* command) {
 
 	pclose(pipe);
 
-	return result;
+	return (result);
 }
 
 /**
@@ -159,10 +163,10 @@ char* get_absolute_path(const char* command) {
 char **_strtok(char *buffer, const char *delim)
 {
 	int count = 0, size = 100, bytes_count = 0, required, length;
-	char **command = malloc(sizeof(char) * 100);
+	char **result = malloc(sizeof(char) * 100);
 	char **resized, *token;
 
-	if(command == NULL)
+	if (result == NULL)
 		panic("Memory allocation failed");
 
 	token = _strtok_helper(buffer, delim);
@@ -173,22 +177,23 @@ char **_strtok(char *buffer, const char *delim)
 		required = bytes_count + length;
 		if (required > size)
 		{
-			resized = realloc(command, sizeof(char) * (size + 100));
-			if(resized == NULL)
+			resized = realloc(result, sizeof(char) * (size + 100));
+			if (resized == NULL)
 				panic("Memory allocation failed");
-			command = resized;
+			result = resized;
 			size += 100;
 		}
-		command[count] = token;
+		result[count] = token;
 		bytes_count += length;
 		count++;
 		token = _strtok_helper(NULL, delim);
 	}
-	return (command);
+	return (result);
 }
 
 
-int main(void) {
+int main(void)
+{
 
 	pid_t child_pid;
 	char **command, buffer[] = "ls";
@@ -206,5 +211,5 @@ int main(void) {
 
 	wait(&status);
 	free(command);
-	return 0;
+	return (0);
 }
