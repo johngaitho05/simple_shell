@@ -1,6 +1,8 @@
 #ifndef SIMPLE_SHELL2_MAIN_H
 #define SIMPLE_SHELL2_MAIN_H
 
+#define MAX_PATH_LENGTH 4096
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
@@ -22,5 +24,6 @@ void _execute(char **command, char **env);
 char *get_absolute_path(const char *command);
 void execute(char *line, char **env);
 int panic(char *msg);
+int _strcmp(char *s1, char *s2);
 
 #endif
