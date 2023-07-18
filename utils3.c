@@ -7,6 +7,7 @@
  */
 int panic(char *msg)
 {
+	/* TODO: Format errors correctly */
 	_puts(msg, 1);
 	exit(1);
 }

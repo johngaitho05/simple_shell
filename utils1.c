@@ -81,3 +81,26 @@ void _puts(char *str, int add_line_break)
 	if (add_line_break)
 		write(STDOUT_FILENO, "\n", 1);
 }
+
+char *_strncat(char *dest, char *src, int n)
+{
+	int i, j;
+
+	i = 0;
+	j = 0;
+
+	while (dest[i] != '\0')
+		i++;
+
+	while (src[j] != '\0' && j < n)
+	{
+		dest[i] = src[j];
+		i++;
+		j++;
+	}
+
+	dest[i] = '\0';
+
+	return (dest);
+}
+

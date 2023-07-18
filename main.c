@@ -12,10 +12,15 @@ int main(int argc __attribute__((unused)),
 		 char **argv __attribute__((unused)), char **env)
 {
 	char *line = NULL;
-
+	int interactive = isatty(STDIN_FILENO);
 	size_t len = 0;
 
-	_puts("$", 0);
+	shell_path = argv[0];
+
+	if (interactive)
+		/* only print the prompt if the shell is launched in interactive mode */
+		_puts("$", 0);
+
 	/* Loop until the user terminates with Ctrl + D */
 	/* TODO: implement a custom getline function */
 	while (getline(&line, &len, stdin) != -1)

@@ -3,6 +3,7 @@
 
 #define MAX_PATH_LENGTH 4096
 
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
@@ -25,5 +26,7 @@ char *get_absolute_path(const char *command);
 void execute(char *line, char **env);
 int panic(char *msg);
 int _strcmp(char *s1, char *s2);
+
+extern char *shell_path;
 
 #endif
