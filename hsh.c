@@ -50,6 +50,28 @@ char *_strtok_helper(char *s, const char *delim)
 }
 
 /**
+ * _strcmp - compares two strings
+ * @s1: first string to compare
+ * @s2: second string to compare
+ *
+ * Return: less than 0 if s1 is less than s2, 0 if they're equal,
+ * more than 0 if s1 is greater than s2
+ */
+int _strcmp(char *s1, char *s2)
+{
+	while (*s1 == *s2)
+	{
+		if (*s1 == '\0')
+		{
+			return (0);
+		}
+		s1++;
+		s2++;
+	}
+	return (*s1 - *s2);
+}
+
+/**
  * _strlen - Returns the length of a string
  * @s: Pointer to the string to be measured
  *
@@ -95,14 +117,15 @@ void _strip(char *str)
  *
  * Return: void.
  */
-void _puts(char *str)
+void _puts(char *str, int add_line_break)
 {
 	int len;
 
 	for (len = 0; str[len] != '\0'; len++);
 
 	write(STDOUT_FILENO, str, len);
-	write(STDOUT_FILENO, "\n", 1);
+	if(add_line_break)
+		write(STDOUT_FILENO, "\n", 1);
 }
 
 /**
@@ -112,8 +135,7 @@ void _puts(char *str)
  */
 int panic(char *msg)
 {
-	_puts(msg);
-	puts("\n");
+	_puts(msg,1);
 	exit(1);
 }
 
@@ -201,6 +223,10 @@ void _execute(char **command, char **env)
 	pid_t child_pid;
 	int status;
 
+	/* If the user typed 'exit' then exit gracefully */
+	if (_strcmp(command[0], "exit") == 0)
+		exit(0);
+
 	/* update the first argument of the array to be an absolute path to the executable */
 	command[0] = get_absolute_path(command[0]);
 	if (!command[0])
@@ -209,6 +235,7 @@ void _execute(char **command, char **env)
 	if (child_pid == 0)
 		if (execve(command[0], command, env) == -1)
 			panic("execve failed!");
+
 	/* Wait for the child process to execute */
 	wait(&status);
 
@@ -239,15 +266,15 @@ int main(int argc, char **argv, char **env)
 		exit(0);
 	}
 
-	puts("$");
+	_puts("$",0);
 	/* Loop until the user terminates with Ctrl + D */
 	/* TODO: implement a custom getline function */
 	while (getline(&line, &len, stdin) != -1)
 	{
-		puts("$");
 		if (line[0] == '\0' || line[0] == '\n')
 			continue;
 		execute(line, env);
+		_puts("$",0);
 	}
 	free(line);
 	return (0);

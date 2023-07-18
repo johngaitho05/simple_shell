@@ -16,7 +16,7 @@
 char *_strtok_helper(char *s, const char *delim);
 int _strlen(char *s);
 void _strip(char *str);
-void _puts(char *str);
+void _puts(char *str, int add_line_break);
 char **_strtok(char *buffer, const char *delim);
 void _execute(char **command, char **env);
 char *get_absolute_path(const char *command);
