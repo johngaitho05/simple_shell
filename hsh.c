@@ -255,16 +255,12 @@ void execute(char *line, char **env)
 	free(command);
 }
 
-int main(int argc, char **argv, char **env)
+int main(int argc __attribute__((unused)),
+		 char **argv __attribute__((unused)), char **env)
 {
 	char *line = NULL;
 
 	size_t len = 0;
-	if (argc > 1) {
-		/* If command was piped, execute and exit */
-		_execute(argv, env);
-		exit(0);
-	}
 
 	_puts("$",0);
 	/* Loop until the user terminates with Ctrl + D */
