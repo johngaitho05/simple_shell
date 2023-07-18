@@ -15,8 +15,6 @@ int main(int argc __attribute__((unused)),
 	int interactive = isatty(STDIN_FILENO);
 	size_t len = 0;
 
-	shell_path = argv[0];
-
 	if (interactive)
 		/* only print the prompt if the shell is launched in interactive mode */
 		_puts("$", 0);

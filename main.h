@@ -27,6 +27,5 @@ void execute(char *line, char **env);
 int panic(char *msg);
 int _strcmp(char *s1, char *s2);
 
-extern char *shell_path;
 
 #endif
