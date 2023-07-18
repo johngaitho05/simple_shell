@@ -18,7 +18,9 @@ int _strlen(char *s);
 void _strip(char *str);
 void _puts(char *str);
 char **_strtok(char *buffer, const char *delim);
-
-extern char **environ;
+void _execute(char **command, char **env);
+char *get_absolute_path(const char *command);
+void execute(char *line, char **env);
+int panic(char *msg);
 
 #endif

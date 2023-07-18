@@ -2,7 +2,6 @@
 
 #define MAX_PATH_LENGTH 4096
 
-
 /**
  * _strtok_helper - computes the next substring
  * given the buffer string and the delimiters
@@ -192,33 +191,63 @@ char **_strtok(char *buffer, const char *delim)
 	return (result);
 }
 
-
-int main(void)
+/**
+ * _execute - executes a command given argv and environment variables
+ * @command: an array of args where the first arg id the program name
+ * @env: environment variables
+ */
+void _execute(char **command, char **env)
 {
-
 	pid_t child_pid;
-	char **command;
 	int status;
+
+	/* update the first argument of the array to be an absolute path to the executable */
+	command[0] = get_absolute_path(command[0]);
+	if (!command[0])
+		panic("command not found");
+	child_pid = fork();
+	if (child_pid == 0)
+		if (execve(command[0], command, env) == -1)
+			panic("execve failed!");
+	/* Wait for the child process to execute */
+	wait(&status);
+
+}
+
+/**
+ * execute - executes the command typed typed by user
+ * @line: the command to execute
+ * @env: an array containing the environment variables
+ */
+void execute(char *line, char **env)
+{
+	char **command;
+
+	command = _strtok(line, " ");
+	_execute(command, env);
+	free(command);
+}
+
+int main(int argc, char **argv, char **env)
+{
 	char *line = NULL;
 
 	size_t len = 0;
-	printf("$");
+	if (argc > 1) {
+		/* If command was piped, execute and exit */
+		_execute(argv, env);
+		exit(0);
+	}
+
+	puts("$");
+	/* Loop until the user terminates with Ctrl + D */
+	/* TODO: implement a custom getline function */
 	while (getline(&line, &len, stdin) != -1)
 	{
-		printf("$");
+		puts("$");
 		if (line[0] == '\0' || line[0] == '\n')
 			continue;
-		command = _strtok(line, " ");
-		command[0] = get_absolute_path(command[0]);
-		if (!command[0])
-			panic("command not found");
-		child_pid = fork();
-		if (child_pid == 0)
-			if (execve(command[0], command, environ) == -1)
-				panic("execve failed!");
-
-		wait(&status);
-		free(command);
+		execute(line, env);
 	}
 	free(line);
 	return (0);
