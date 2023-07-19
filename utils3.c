@@ -84,6 +84,20 @@ void _execute(char **command, char **env)
 
 }
 
+void remove_comment(char *buffer)
+{
+	int i = 0;
+
+	while (buffer[i])
+	{
+		if (buffer[i] == '#')
+		{
+			buffer[i] = '\0';
+		}
+		i++;
+	}
+}
+
 /**
  * execute - executes the command typed typed by user
  * @line: the command to execute
@@ -91,10 +105,16 @@ void _execute(char **command, char **env)
  */
 void execute(char *line, char **env)
 {
-	char **command;
+	char **commands, **command;
+	int i = 0;
 
-	command = _strtok(line, " ");
-	_execute(command, env);
+	remove_comment(line);
+	commands = _strtok(line, ";");
+	while(commands[i]) {
+		command = _strtok(commands[i], " ");
+		_execute(command, env);
+		i++;
+	}
 	free(command);
 }
 
@@ -142,4 +162,5 @@ ssize_t _getline(char **lineptr, size_t *n, FILE *stream)
 	*n = bufsize;
 	return (res); /* Return the number of characters read */
 }
+
 

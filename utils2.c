@@ -83,6 +83,8 @@ char **_strtok(char *buffer, const char *delim)
 		bytes_count += length;
 		count++;
 		token = _strtok_helper(NULL, delim);
+
 	}
+	result[count] = NULL;
 	return (result);
 }
