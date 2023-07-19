@@ -26,6 +26,6 @@ char *get_absolute_path(const char *command);
 void execute(char *line, char **env);
 int panic(char *msg);
 int _strcmp(char *s1, char *s2);
-
+ssize_t _getline(char **lineptr, size_t *n, FILE *stream);
 
 #endif

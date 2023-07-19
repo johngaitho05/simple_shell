@@ -21,7 +21,7 @@ int main(int argc __attribute__((unused)),
 
 	/* Loop until the user terminates with Ctrl + D */
 	/* TODO: implement a custom getline function */
-	while (getline(&line, &len, stdin) != -1)
+	while (_getline(&line, &len, stdin) != -1)
 	{
 		if (line[0] == '\0' || line[0] == '\n')
 			continue;
