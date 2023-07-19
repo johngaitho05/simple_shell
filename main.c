@@ -1,6 +1,5 @@
 #include "main.h"
 
-
 /**
  * main - entry point for the shell
  * @argc: number of args
@@ -20,7 +19,6 @@ int main(int argc __attribute__((unused)),
 		_puts("$", 0);
 
 	/* Loop until the user terminates with Ctrl + D */
-	/* TODO: implement a custom getline function */
 	while (_getline(&line, &len, stdin) != -1)
 	{
 		if (line[0] == '\0' || line[0] == '\n')

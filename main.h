@@ -1,8 +1,6 @@
 #ifndef SIMPLE_SHELL2_MAIN_H
 #define SIMPLE_SHELL2_MAIN_H
 
-#define MAX_PATH_LENGTH 4096
-
 
 #include <stdio.h>
 #include <stdlib.h>

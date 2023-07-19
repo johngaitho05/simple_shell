@@ -1,6 +1,7 @@
 #include "main.h"
 
 #define BUFFER_SIZE 128
+#define MAX_PATH_LENGTH 4096
 
 /**
  * panic - prints an error message and exist the process
