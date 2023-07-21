@@ -50,6 +50,7 @@ void _execute(char **command, char **env)
 {
 	pid_t child_pid;
 	int status;
+	char *path;
 
 	/* If the user typed 'exit' then exit gracefully */
 	if (_strcmp(command[0], "exit") == 0)
@@ -58,21 +59,32 @@ void _execute(char **command, char **env)
 			exit(_atoi(command[1]));
 		exit(0);
 	}
-
-	/*
+	if (_strcmp(command[0], "cd") == 0)
+	{
+		if(!command[1])
+			path = getenv("HOME");
+		else
+			path = command[1];
+		if(chdir(path) == -1)
+			panic("No such file or directory");
+	}
+	else
+	{
+		/*
 	 * update the first argument of the array to
 	 * be an absolute path to the executable
 	 */
-	command[0] = get_absolute_path(command[0]);
-	if (!command[0])
-		panic("command not found");
-	child_pid = fork();
-	if (child_pid == 0)
-		if (execve(command[0], command, env) == -1)
-			panic("execve failed!");
+		command[0] = get_absolute_path(command[0]);
+		if (!command[0])
+			panic("command not found");
+		child_pid = fork();
+		if (child_pid == 0)
+			if (execve(command[0], command, env) == -1)
+				panic("execve failed!");
 
-	/* Wait for the child process to execute */
-	wait(&status);
+		/* Wait for the child process to execute */
+		wait(&status);
+	}
 
 }
 
