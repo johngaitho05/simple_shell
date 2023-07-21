@@ -50,7 +50,7 @@ void _execute(char **command, char **env)
 {
 	pid_t child_pid;
 	int status;
-	char *path;
+	char *path, *cwd=NULL;
 
 	/* If the user typed 'exit' then exit gracefully */
 	if (_strcmp(command[0], "exit") == 0)
@@ -59,6 +59,7 @@ void _execute(char **command, char **env)
 			exit(_atoi(command[1]));
 		exit(0);
 	}
+	/* If user typed cd, then call chdir and update PWD value */
 	if (_strcmp(command[0], "cd") == 0)
 	{
 		if (!command[1])
@@ -67,6 +68,7 @@ void _execute(char **command, char **env)
 			path = command[1];
 		if (chdir(path) == -1)
 			panic("No such file or directory");
+		setenv("PWD", getcwd(cwd,MAX_PATH_LENGTH),1);
 	}
 	else
 	{

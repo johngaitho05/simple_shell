@@ -99,7 +99,10 @@ char **_strtok(char *buffer, const char *delim)
 	token = _strtok_helper(buffer, delim);
 	while (token != NULL)
 	{
-		_strip(token); /* remove trailing spaces */
+		token = _strip(token, " \n\r"); /* remove trailing spaces */
+        if (token[0] == '$')
+			/* Replace with the actual value */
+			token = getenv(_strip(token, "$"));
 		length = _strlen(token);
 		required = bytes_count + length;
 		if (required > size)

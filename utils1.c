@@ -44,22 +44,33 @@ int _strlen(char *s)
 
 
 /**
- * _strip - remove trailing spaces from string
+ * _strip - remove specific characters at the beginning and end of string
  * @str: the string to strip
+ * @tokens: characters to remove
+ * Return: void (modifies input string in place)
  */
-void _strip(char *str)
+char  *_strip(char *str, char *tokens)
 {
-	int length = _strlen(str);
+	int length = _strlen(str), i = 0;
+	if (!tokens)
+		tokens = " \n\r";
 
 	if (length > 0)
 	{
-		while (length > 0 && (str[length - 1] == ' ' ||
-							  str[length - 1] == '\n' || str[length - 1] == '\r'))
+		/* Remove leading spaces **/
+		while (i < length && strchr(tokens, str[i]))
+			i++;
+		memmove(str, str + i, length - i + 1);
+
+		/* Remove trailing spaces */
+		while (length > 0 && strchr(tokens, str[length - 1]))
 		{
 			str[length - 1] = '\0';
 			length--;
 		}
 	}
+
+	return (str);
 }
 
 /**
