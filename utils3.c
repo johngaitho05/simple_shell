@@ -65,7 +65,11 @@ void _execute(char **command, char **env)
 
 	/* If the user typed 'exit' then exit gracefully */
 	if (_strcmp(command[0], "exit") == 0)
+	{
+		if (command[1])
+			exit(_atoi(command[1]));
 		exit(0);
+	}
 
 	/*
 	 * update the first argument of the array to

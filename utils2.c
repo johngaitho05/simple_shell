@@ -1,5 +1,7 @@
 #include "main.h"
 
+#define BUFFER_SIZE 128
+
 /**
  * _strtok_helper - computes the next substring
  * given the buffer string and the delimiters
@@ -58,8 +60,8 @@ cont:
  */
 char **_strtok(char *buffer, const char *delim)
 {
-	int count = 0, size = 100, bytes_count = 0, required, length;
-	char **result = malloc(sizeof(char) * 100);
+	int count = 0, size = BUFFER_SIZE, bytes_count = 0, required, length;
+	char **result = malloc(sizeof(char) * BUFFER_SIZE);
 	char **resized, *token;
 
 	if (result == NULL)
@@ -73,11 +75,11 @@ char **_strtok(char *buffer, const char *delim)
 		required = bytes_count + length;
 		if (required > size)
 		{
-			resized = realloc(result, sizeof(char) * (size + 100));
+			resized = realloc(result, sizeof(char) * (size + BUFFER_SIZE));
 			if (resized == NULL)
 				panic("Memory allocation failed");
 			result = resized;
-			size += 100;
+			size += BUFFER_SIZE;
 		}
 		result[count] = token;
 		bytes_count += length;
@@ -88,3 +90,21 @@ char **_strtok(char *buffer, const char *delim)
 	result[count] = NULL;
 	return (result);
 }
+
+/**
+ * _atoi- convert string to int
+ * @str: the string to convert
+ * Return: the converted number
+ */
+int _atoi(char *str)
+{
+	int num = 0, i;
+
+	for (i = 0; str[i] != '\0'; i++)
+	{
+		num = num * 10 + (str[i] - 48);
+	}
+
+	return (num);
+}
+
