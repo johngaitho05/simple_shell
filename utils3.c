@@ -61,11 +61,11 @@ void _execute(char **command, char **env)
 	}
 	if (_strcmp(command[0], "cd") == 0)
 	{
-		if(!command[1])
+		if (!command[1])
 			path = getenv("HOME");
 		else
 			path = command[1];
-		if(chdir(path) == -1)
+		if (chdir(path) == -1)
 			panic("No such file or directory");
 	}
 	else
