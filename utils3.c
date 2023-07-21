@@ -4,18 +4,6 @@
 #define MAX_PATH_LENGTH 4096
 
 /**
- * panic - prints an error message and exist the process
- * @msg: the error message to print
- * Return: 1 to indicate fail
- */
-int panic(char *msg)
-{
-	/* TODO: Format errors correctly */
-	_puts(msg, 1);
-	exit(1);
-}
-
-/**
  * get_absolute_path - given a command name,
  * this function finds the absolute path to the executable
  * @command: name of the command (str)
@@ -88,6 +76,12 @@ void _execute(char **command, char **env)
 
 }
 
+/**
+ * remove_comment - replaces '#' with null thus
+ * ignoring everything that comes after
+ * @buffer: the input string
+ * Return: void
+ */
 void remove_comment(char *buffer)
 {
 	int i = 0;
@@ -114,7 +108,8 @@ void execute(char *line, char **env)
 
 	remove_comment(line);
 	commands = _strtok(line, ";");
-	while(commands[i]) {
+	while (commands[i])
+	{
 		command = _strtok(commands[i], " ");
 		_execute(command, env);
 		i++;

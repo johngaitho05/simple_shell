@@ -3,6 +3,35 @@
 #define BUFFER_SIZE 128
 
 /**
+ * _atoi- convert string to int
+ * @str: the string to convert
+ * Return: the converted number
+ */
+int _atoi(char *str)
+{
+	int num = 0, i;
+
+	for (i = 0; str[i] != '\0'; i++)
+	{
+		num = num * 10 + (str[i] - 48);
+	}
+
+	return (num);
+}
+
+/**
+ * panic - prints an error message and exist the process
+ * @msg: the error message to print
+ * Return: 1 to indicate fail
+ */
+int panic(char *msg)
+{
+	/* TODO: Format errors correctly */
+	_puts(msg, 1);
+	exit(1);
+}
+
+/**
  * _strtok_helper - computes the next substring
  * given the buffer string and the delimiters
  * @s: the string from which to extract a substring
@@ -91,20 +120,4 @@ char **_strtok(char *buffer, const char *delim)
 	return (result);
 }
 
-/**
- * _atoi- convert string to int
- * @str: the string to convert
- * Return: the converted number
- */
-int _atoi(char *str)
-{
-	int num = 0, i;
-
-	for (i = 0; str[i] != '\0'; i++)
-	{
-		num = num * 10 + (str[i] - 48);
-	}
-
-	return (num);
-}
 
