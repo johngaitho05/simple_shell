@@ -58,14 +58,18 @@ void handle_cd(char **command, char *program)
 	{
 		path = getenv("OLDPWD");
 		if (!path)
+		{
+			command[1] = NULL;
 			panic("OLDPWD not set", command, program);
+		}
 	}
 
-	getcwd(owd, MAX_PATH_LENGTH);
+	owd  = getcwd(cwd, MAX_PATH_LENGTH);
 	if (chdir(path) == -1)
 		panic("No such file or directory", command, program);
 	setenv("PWD", getcwd(cwd, MAX_PATH_LENGTH), 1);
-	setenv("OLDPWD",  owd, 1);
+	setenv("OLDPWD", owd, 1);
+	free(cwd);
 }
 
 
