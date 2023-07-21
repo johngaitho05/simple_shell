@@ -52,6 +52,7 @@ int _strlen(char *s)
 char  *_strip(char *str, char *tokens)
 {
 	int length = _strlen(str), i = 0;
+
 	if (!tokens)
 		tokens = " \n\r";
 
