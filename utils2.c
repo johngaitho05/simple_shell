@@ -20,14 +20,35 @@ int _atoi(char *str)
 }
 
 /**
- * panic - prints an error message and exist the process
+ * panic - prints an error message and exits the process
  * @msg: the error message to print
+ * @command: the command args array
+ * @program: path to the shell as entered by the user
  * Return: 1 to indicate fail
  */
-int panic(char *msg)
+int panic(char *msg, char **command, char *program)
 {
-	/* TODO: Format errors correctly */
+
+	int i = 0;
+	char *error;
+	int interactive = isatty(STDIN_FILENO);
+
+	if (program)
+	{
+		if (interactive)
+			error = _strncat(program, ": ");
+		else
+			error = _strncat(program, ": line 1: ");
+		_puts(error, 0);
+	}
+	while (command[i])
+	{
+		error = _strncat(command[i], ": ");
+		_puts(error, 0);
+		i++;
+	}
 	_puts(msg, 1);
+	free(error); /* _strncat returns a malloc object, so we need to free it */
 	exit(1);
 }
 
@@ -94,7 +115,7 @@ char **_strtok(char *buffer, const char *delim)
 	char **resized, *token;
 
 	if (result == NULL)
-		panic("Memory allocation failed");
+		panic("Memory allocation failed",  NULL, NULL);
 
 	token = _strtok_helper(buffer, delim);
 	while (token != NULL)
@@ -108,7 +129,7 @@ char **_strtok(char *buffer, const char *delim)
 		{
 			resized = realloc(result, sizeof(char) * (size + BUFFER_SIZE));
 			if (resized == NULL)
-				panic("Memory allocation failed");
+				panic("Memory allocation failed",  NULL, NULL);
 			result = resized;
 			size += BUFFER_SIZE;
 		}
@@ -122,4 +143,48 @@ char **_strtok(char *buffer, const char *delim)
 	return (result);
 }
 
+/**
+ * _getline - reads a string input from a stream and stores it to a buffer
+ * @lineptr: pointer to the buffer
+ * @n: size of the buffer that was created
+ * @stream: the input
+ * Return: number of characters read
+ */
+ssize_t _getline(char **lineptr, size_t *n, FILE *stream)
+{
+	int ch;
+	size_t res = 0, bufsize = *n;
+	char *buffer = *lineptr, *resized_buffer;
+
+	if (lineptr == NULL || n == NULL || stream == NULL)
+		return (-1); /* Invalid input parameters */
+	if (buffer == NULL)
+	{
+		/* Allocate memory for the buffer initially */
+		buffer = (char *)malloc(BUFFER_SIZE);
+		if (buffer == NULL)
+			return (-1); /* Memory allocation failure */
+		bufsize = BUFFER_SIZE;
+	}
+	while ((ch = fgetc(stream)) != EOF)
+	{
+		if (res >= bufsize - 1)
+		{ /* Make room for the null-terminator */
+			bufsize += BUFFER_SIZE;
+			resized_buffer = (char *)realloc(buffer, bufsize);
+			if (resized_buffer == NULL)
+				return (-1); /* Memory allocation failure */
+			buffer = resized_buffer;
+		}
+		buffer[res++] = ch;
+		if (ch == '\n')
+			break;
+	}
+	if (res == 0)
+		return (-1); /* No data read, or an error occurred */
+	buffer[res] = '\0'; /* Null-terminate the string */
+	*lineptr = buffer;
+	*n = bufsize;
+	return (res); /* Return the number of characters read */
+}
 

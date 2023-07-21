@@ -1,6 +1,5 @@
 #include "main.h"
 
-
 /**
  * _strcmp - compares two strings
  * @s1: first string to compare
@@ -94,32 +93,27 @@ void _puts(char *str, int add_line_break)
 }
 
 /**
- * _strncat - concatenates n bytes from a string to another
- * @dest: destination string
- * @src: source string
- * @n: number of bytes of str to concatenate
- *
- * Return: a pointer to the resulting string dest
+ * _strncat - concatenates two strings
+ * @s1: the first string
+ * @s2: the second string
+ * Return: s1 + s2
  */
-char *_strncat(char *dest, char *src, int n)
+char *_strncat(char *s1, char *s2)
 {
-	int i, j;
+	int i = 0, j = 0, length = _strlen(s1) + _strlen(s2);
+	char *res = malloc(sizeof(char) * length);
 
-	i = 0;
-	j = 0;
-
-	while (dest[i] != '\0')
-		i++;
-
-	while (src[j] != '\0' && j < n)
+	while (s1[i])
 	{
-		dest[i] = src[j];
+		res[i] = s1[i];
 		i++;
+	}
+	while (s2[j])
+	{
+		res[i + j] = s2[j];
 		j++;
 	}
-
-	dest[i] = '\0';
-
-	return (dest);
+	res[i + j] = '\0';
+	return (res);
 }
 

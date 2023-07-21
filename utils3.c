@@ -40,17 +40,46 @@ char *get_absolute_path(const char *command)
 	return (result);
 }
 
+/**
+ * handle_cd - handles change directory command
+ * @command: an array containing the arguments of cd
+ * @program: the shell path as accessed by the user
+ * Return: void
+ */
+void handle_cd(char **command, char *program)
+{
+	char *path, *cwd = NULL, *owd = NULL;
+
+	if (!command[1])
+		path = getenv("HOME");
+	else
+		path = command[1];
+	if (_strcmp(command[1], "-") == 0)
+	{
+		path = getenv("OLDPWD");
+		if (!path)
+			panic("OLDPWD not set", command, program);
+	}
+
+	getcwd(owd, MAX_PATH_LENGTH);
+	if (chdir(path) == -1)
+		panic("No such file or directory", command, program);
+	setenv("PWD", getcwd(cwd, MAX_PATH_LENGTH), 1);
+	setenv("OLDPWD",  owd, 1);
+}
+
 
 /**
  * _execute - executes a command given argv and environment variables
  * @command: an array of args where the first arg id the program name
+ * @program: the shell path as accessed by the user
  * @env: environment variables
  */
-void _execute(char **command, char **env)
+void _execute(char **command, char **env, char *program)
 {
 	pid_t child_pid;
 	int status;
-	char *path, *cwd = NULL;
+	char *path;
 
 	/* If the user typed 'exit' then exit gracefully */
 	if (_strcmp(command[0], "exit") == 0)
@@ -61,28 +90,26 @@ void _execute(char **command, char **env)
 	}
 	/* If user typed cd, then call chdir and update PWD value */
 	if (_strcmp(command[0], "cd") == 0)
-	{
-		if (!command[1])
-			path = getenv("HOME");
-		else
-			path = command[1];
-		if (chdir(path) == -1)
-			panic("No such file or directory");
-		setenv("PWD", getcwd(cwd, MAX_PATH_LENGTH), 1);
-	}
+		handle_cd(command, program);
 	else
 	{
 		/*
-	 * update the first argument of the array to
-	 * be an absolute path to the executable
-	 */
-		command[0] = get_absolute_path(command[0]);
-		if (!command[0])
-			panic("command not found");
+		 * update the first argument of the array
+		 * to be an absolute path to the executable
+		 */
+		path = get_absolute_path(command[0]);
+		if (!path)
+		{
+			if (isatty(STDIN_FILENO))
+				program = NULL;
+			panic("command not found", command, program);
+		}
+
+		command[0] = path;
 		child_pid = fork();
 		if (child_pid == 0)
 			if (execve(command[0], command, env) == -1)
-				panic("execve failed!");
+				panic("execve failed!", command, program);
 
 		/* Wait for the child process to execute */
 		wait(&status);
@@ -114,8 +141,9 @@ void remove_comment(char *buffer)
  * execute - executes the command typed typed by user
  * @line: the command to execute
  * @env: an array containing the environment variables
+ * @program: the shell path as accessed by the user
  */
-void execute(char *line, char **env)
+void execute(char *line, char **env, char *program)
 {
 	char **commands, **command;
 	int i = 0;
@@ -125,55 +153,10 @@ void execute(char *line, char **env)
 	while (commands[i])
 	{
 		command = _strtok(commands[i], " ");
-		_execute(command, env);
+		_execute(command, env, program);
 		i++;
 	}
 	free(command);
-}
-
-/**
- * _getline - reads a string input from a stream and stores it to a buffer
- * @lineptr: pointer to the buffer
- * @n: size of the buffer that was created
- * @stream: the input
- * Return: number of characters read
- */
-ssize_t _getline(char **lineptr, size_t *n, FILE *stream)
-{
-	int ch;
-	size_t res = 0, bufsize = *n;
-	char *buffer = *lineptr, *resized_buffer;
-
-	if (lineptr == NULL || n == NULL || stream == NULL)
-		return (-1); /* Invalid input parameters */
-	if (buffer == NULL)
-	{
-		/* Allocate memory for the buffer initially */
-		buffer = (char *)malloc(BUFFER_SIZE);
-		if (buffer == NULL)
-			return (-1); /* Memory allocation failure */
-		bufsize = BUFFER_SIZE;
-	}
-	while ((ch = fgetc(stream)) != EOF)
-	{
-		if (res >= bufsize - 1)
-		{ /* Make room for the null-terminator */
-			bufsize += BUFFER_SIZE;
-			resized_buffer = (char *)realloc(buffer, bufsize);
-			if (resized_buffer == NULL)
-				return (-1); /* Memory allocation failure */
-			buffer = resized_buffer;
-		}
-		buffer[res++] = ch;
-		if (ch == '\n')
-			break;
-	}
-	if (res == 0)
-		return (-1); /* No data read, or an error occurred */
-	buffer[res] = '\0'; /* Null-terminate the string */
-	*lineptr = buffer;
-	*n = bufsize;
-	return (res); /* Return the number of characters read */
 }
 
 
