@@ -77,19 +77,22 @@ char  *_strip(char *str, char *tokens)
  * _puts - prints a string, followed by a new line, to stdout.
  * @str: the string to print.
  * @add_line_break: whether the string should end with a new line or not.
+ * @descriptor: Where to print (1 for stdout, 2 for stderror)
  * 1 for yes and 0 for no
  * Return: void.
  */
-void _puts(char *str, int add_line_break)
+void _puts(char *str, int descriptor, int add_line_break)
 {
 	int len = 0;
+
 
 	while (str[len] != '\0')
 		len++;
 
-	write(STDOUT_FILENO, str, len);
+	write(descriptor, str, len);
+
 	if (add_line_break)
-		write(STDOUT_FILENO, "\n", 1);
+		write(descriptor, "\n", 1);
 }
 
 /**

@@ -9,35 +9,27 @@
  * @command: name of the command (str)
  * Return: absolute path to the executable
  */
-char *get_absolute_path(const char *command)
+char *get_absolute_path(char *command)
 {
-	FILE *pipe;
-	char *result = NULL;
-	char buffer[MAX_PATH_LENGTH];
-	char cmd[MAX_PATH_LENGTH + 20];
+	char *path_string = strdup(getenv("PATH")), *dir, *file;
+	char **path_dirs = _strtok(path_string, ":");
+	int i = 0;
+	struct stat file_stat;
 
-	snprintf(cmd, sizeof(cmd), "which %s", command);
-	pipe = popen(cmd, "r");
-	if (pipe == NULL)
+	while (path_dirs[i])
 	{
-		perror("popen");
-		return (NULL);
-	}
-	if (fgets(buffer, sizeof(buffer), pipe) != NULL)
-	{
-		size_t len = _strlen(buffer);
-
-		if (len > 0 && buffer[len - 1] == '\n')
-		{
-			buffer[len - 1] = '\0';
-		}
-
-		result = strdup(buffer);
+		/* Search the executable in the path */
+		dir = _strncat(path_dirs[i],  "/");
+		file = _strncat(dir, command);
+		if (stat(file, &file_stat) == 0)
+			if (S_ISREG(file_stat.st_mode))
+				return (file);
+		i++;
 	}
 
-	pclose(pipe);
+	free(path_dirs);
+	return (NULL);
 
-	return (result);
 }
 
 /**
@@ -60,66 +52,61 @@ void handle_cd(char **command, char *program)
 		if (!path)
 		{
 			command[1] = NULL;
-			panic("OLDPWD not set", command, program);
+			panic("OLDPWD not set", command, program, 1);
 		}
 	}
 
 	owd  = getcwd(cwd, MAX_PATH_LENGTH);
 	if (chdir(path) == -1)
-		panic("No such file or directory", command, program);
+		panic("No such file or directory", command, program, 1);
 	setenv("PWD", getcwd(cwd, MAX_PATH_LENGTH), 1);
 	setenv("OLDPWD", owd, 1);
 	free(cwd);
+	free(owd);
 }
-
 
 /**
  * _execute - executes a command given argv and environment variables
  * @command: an array of args where the first arg id the program name
  * @program: the shell path as accessed by the user
- * @env: environment variables
  */
-void _execute(char **command, char **env, char *program)
+void _execute(char **command, char *program)
 {
 	pid_t child_pid;
-	int status;
-	char *path;
+	int status, free_path = 0;
+	char *path = NULL;
+	struct stat file_stat;
+	char *cmd = command[0];
 
-
-
-	/* If the user typed 'exit' then exit gracefully */
-	if (_strcmp(command[0], "exit") == 0)
+	handle_special(**command);
+	if (stat(cmd, &file_stat) == 0)
 	{
-		if (command[1])
-			exit(_atoi(command[1]));
-		exit(0);
+		if (S_ISREG(file_stat.st_mode))
+			path = cmd; /* The passed argument is an absolute file path */
 	}
-	/* If user typed cd, then call chdir and update PWD value */
-	if (_strcmp(command[0], "cd") == 0)
-		handle_cd(command, program);
 	else
 	{
-		/*
-		 * update the first argument of the array
-		 * to be an absolute path to the executable
-		 */
-		path = get_absolute_path(command[0]);
-		if (!path)
-		{
-			if (isatty(STDIN_FILENO))
-				program = NULL;
-			panic("command not found", command, program);
-		}
-
-		command[0] = path;
-		child_pid = fork();
-		if (child_pid == 0)
-			if (execve(command[0], command, env) == -1)
-				panic("execve failed!", command, program);
-
-		/* Wait for the child process to execute */
-		wait(&status);
+		path = get_absolute_path(cmd);
+		free_path = 1;
 	}
+
+	if (!path)
+	{
+		if (isatty(STDIN_FILENO))
+			program = NULL;
+		panic("not found", command, program, 127);
+	}
+
+	cmd = path;
+	child_pid = fork();
+	if (child_pid == 0)
+		if (execve(cmd, command, environ) == -1)
+			panic("execve failed!", command, program, 1);
+
+	/* Wait for the child process to execute */
+	wait(&status);
+	if (free_path && path)
+		free(path);
 
 }
 
@@ -133,12 +120,12 @@ void remove_comment(char *buffer)
 {
 	int i = 0;
 
-	if(buffer[0] == '#')
+	if (buffer[0] == '#')
 		exit(0); /* The whole input is a comment */
 
 	while (buffer[i])
 	{
-		if (buffer[i] == '#' && buffer[i-1] == ' ')
+		if (buffer[i] == '#' && buffer[i - 1] == ' ')
 		{
 			buffer[i] = '\0';
 		}
@@ -149,22 +136,21 @@ void remove_comment(char *buffer)
 /**
  * execute - executes the command typed typed by user
  * @line: the command to execute
- * @env: an array containing the environment variables
  * @program: the shell path as accessed by the user
  */
-void execute(char *line, char **env, char *program)
+void execute(char *line, char *program)
 {
 	char **commands, **command;
 	int i = 0;
 
 	remove_comment(line);
-    if(line == NULL)
+	if (line == NULL)
 		exit(0);
 	commands = _strtok(line, ";");
 	while (commands[i])
 	{
 		command = _strtok(commands[i], " ");
-		_execute(command, env, program);
+		_execute(command, program);
 		i++;
 	}
 	free(command);

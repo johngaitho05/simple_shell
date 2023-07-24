@@ -10,12 +10,17 @@
 int _atoi(char *str)
 {
 	int num = 0, i;
+	char *allowed_chars = "0123456789";
 
 	for (i = 0; str[i] != '\0'; i++)
 	{
+		if (!strchr(allowed_chars, str[i]))
+		{
+			num = -1;
+			break;
+		}
 		num = num * 10 + (str[i] - 48);
 	}
-
 	return (num);
 }
 
@@ -24,9 +29,10 @@ int _atoi(char *str)
  * @msg: the error message to print
  * @command: the command args array
  * @program: path to the shell as entered by the user
+ * @code: exit code
  * Return: 1 to indicate fail
  */
-int panic(char *msg, char **command, char *program)
+int panic(char *msg, char **command, char *program, int code)
 {
 
 	int i = 0;
@@ -38,18 +44,21 @@ int panic(char *msg, char **command, char *program)
 		if (interactive)
 			error = _strncat(program, ": ");
 		else
-			error = _strncat(program, ": line 1: ");
-		_puts(error, 0);
+			error = _strncat(program, ": 1: ");
+		_puts(error, 2, 0);
 	}
-	while (command[i])
+	if (command)
 	{
-		error = _strncat(command[i], ": ");
-		_puts(error, 0);
-		i++;
+		while (command[i])
+		{
+			error = _strncat(command[i], ": ");
+			_puts(error, 2, 0);
+			i++;
+		}
 	}
-	_puts(msg, 1);
+	_puts(msg, 2, 1);
 	free(error); /* _strncat returns a malloc object, so we need to free it */
-	exit(1);
+	exit(code);
 }
 
 /**
@@ -115,7 +124,7 @@ char **_strtok(char *buffer, const char *delim)
 	char **resized, *token;
 
 	if (result == NULL)
-		panic("Memory allocation failed",  NULL, NULL);
+		panic("Memory allocation failed",  NULL, NULL, 1);
 
 	token = _strtok_helper(buffer, delim);
 	while (token != NULL)
@@ -129,7 +138,7 @@ char **_strtok(char *buffer, const char *delim)
 		{
 			resized = realloc(result, sizeof(char) * (size + BUFFER_SIZE));
 			if (resized == NULL)
-				panic("Memory allocation failed",  NULL, NULL);
+				panic("Memory allocation failed",  NULL, NULL, 1);
 			result = resized;
 			size += BUFFER_SIZE;
 		}

@@ -8,7 +8,7 @@
  * Return: 0 on success, 1 on failure
  */
 int main(int argc __attribute__((unused)),
-		 char **argv __attribute__((unused)), char **env)
+		 char **argv __attribute__((unused)))
 {
 	char *line = NULL, *program = "bash";
 	int interactive = isatty(STDIN_FILENO);
@@ -22,7 +22,7 @@ int main(int argc __attribute__((unused)),
 	{
 		if (line[0] == '\0' || line[0] == '\n')
 			continue;
-		execute(line, env, program);
+		execute(line, program);
 	}
 	if(line != NULL)
 		free(line);
