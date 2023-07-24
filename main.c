@@ -4,7 +4,6 @@
  * main - entry point for the shell
  * @argc: number of args
  * @argv: command line arguments
- * @env: environment variables
  * Return: 0 on success, 1 on failure
  */
 int main(int argc __attribute__((unused)),
@@ -24,7 +23,7 @@ int main(int argc __attribute__((unused)),
 			continue;
 		execute(line, program);
 	}
-	if(line != NULL)
+	if (line != NULL)
 		free(line);
 	return (0);
 }

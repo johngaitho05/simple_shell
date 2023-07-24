@@ -78,7 +78,7 @@ void _execute(char **command, char *program)
 	struct stat file_stat;
 	char *cmd = command[0];
 
-	handle_special(**command);
+	handle_special(command, program);
 	if (stat(cmd, &file_stat) == 0)
 	{
 		if (S_ISREG(file_stat.st_mode))
