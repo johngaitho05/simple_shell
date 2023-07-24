@@ -99,3 +99,6 @@ _getline.c
 /data/
 secret.*
 hsh
+allowed_functions
+runchecker.bash
+/TEST_SUITE/

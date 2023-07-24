@@ -85,6 +85,8 @@ void _execute(char **command, char **env, char *program)
 	int status;
 	char *path;
 
+
+
 	/* If the user typed 'exit' then exit gracefully */
 	if (_strcmp(command[0], "exit") == 0)
 	{
@@ -131,9 +133,12 @@ void remove_comment(char *buffer)
 {
 	int i = 0;
 
+	if(buffer[0] == '#')
+		exit(0); /* The whole input is a comment */
+
 	while (buffer[i])
 	{
-		if (buffer[i] == '#')
+		if (buffer[i] == '#' && buffer[i-1] == ' ')
 		{
 			buffer[i] = '\0';
 		}
@@ -153,6 +158,8 @@ void execute(char *line, char **env, char *program)
 	int i = 0;
 
 	remove_comment(line);
+    if(line == NULL)
+		exit(0);
 	commands = _strtok(line, ";");
 	while (commands[i])
 	{
