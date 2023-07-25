@@ -93,7 +93,6 @@ void _execute(char **command, char *program)
 		setenv("EXIT_CODE", "0", 0);
 		return; /* It was special command, so we terminate */
 	}
-	printf("computing path:%s\n", cmd);
 	if (stat(cmd, &file_stat) == 0)
 	{
 		if (S_ISREG(file_stat.st_mode))
@@ -104,7 +103,6 @@ void _execute(char **command, char *program)
 		path = get_absolute_path(cmd);
 		free_path = 1;
 	}
-	printf("computed path:%s\n", path);
 	if (!path)
 	{
 		if (isatty(STDIN_FILENO))
