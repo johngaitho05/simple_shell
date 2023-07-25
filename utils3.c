@@ -1,7 +1,6 @@
 #include "main.h"
 
 #define BUFFER_SIZE 128
-#define MAX_PATH_LENGTH 4096
 
 /**
  * get_absolute_path - given a command name,
@@ -33,39 +32,6 @@ char *get_absolute_path(char *command)
 }
 
 /**
- * handle_cd - handles change directory command
- * @command: an array containing the arguments of cd
- * @program: the shell path as accessed by the user
- * Return: void
- */
-void handle_cd(char **command, char *program)
-{
-	char *path, *cwd = NULL, *owd = NULL;
-
-	if (!command[1])
-		path = getenv("HOME");
-	else
-		path = command[1];
-	if (_strcmp(command[1], "-") == 0)
-	{
-		path = getenv("OLDPWD");
-		if (!path)
-		{
-			command[1] = NULL;
-			panic("OLDPWD not set", command, program, 1);
-		}
-	}
-
-	owd  = getcwd(cwd, MAX_PATH_LENGTH);
-	if (chdir(path) == -1)
-		panic("No such file or directory", command, program, 1);
-	setenv("PWD", getcwd(cwd, MAX_PATH_LENGTH), 1);
-	setenv("OLDPWD", owd, 1);
-	free(cwd);
-	free(owd);
-}
-
-/**
  * _execute - executes a command given argv and environment variables
  * @command: an array of args where the first arg id the program name
  * @program: the shell path as accessed by the user
@@ -73,12 +39,19 @@ void handle_cd(char **command, char *program)
 void _execute(char **command, char *program)
 {
 	pid_t child_pid;
-	int status, free_path = 0;
+	int status, free_path = 0, special;
 	char *path = NULL;
 	struct stat file_stat;
-	char *cmd = command[0];
+	char *cmd = command[0], str_code[20];
 
-	handle_special(command, program);
+	special = handle_special(command, program);
+
+	if (special == 0)
+	{
+		setenv("EXIT_CODE", "0", 0);
+		return; /* It was special command, so we terminate */
+	}
+
 	if (stat(cmd, &file_stat) == 0)
 	{
 		if (S_ISREG(file_stat.st_mode))
@@ -95,17 +68,23 @@ void _execute(char **command, char *program)
 		if (isatty(STDIN_FILENO))
 			program = NULL;
 		panic("not found", command, program, 127);
+		return;
 	}
 
 	cmd = path;
 	child_pid = fork();
 	if (child_pid == 0)
 		if (execve(cmd, command, environ) == -1)
+		{
 			panic("execve failed!", command, program, 1);
+			return;
+		}
 
 	/* Wait for the child process to execute */
 	wait(&status);
-	if (free_path && path)
+	sprintf(str_code, "%d", WEXITSTATUS(status));
+	setenv("EXIT_CODE", str_code, 1);
+	if (free_path)
 		free(path);
 
 }
@@ -134,11 +113,11 @@ void remove_comment(char *buffer)
 }
 
 /**
- * execute - executes the command typed typed by user
+ * execute - executes the command typed by user
  * @line: the command to execute
  * @program: the shell path as accessed by the user
  */
-void execute(char *line, char *program)
+int execute(char *line, char *program)
 {
 	char **commands, **command;
 	int i = 0;
@@ -154,6 +133,5 @@ void execute(char *line, char *program)
 		i++;
 	}
 	free(command);
+	return (0);
 }
-
-

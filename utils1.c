@@ -23,6 +23,19 @@ int _strcmp(char *s1, char *s2)
 }
 
 /**
+ * @array: a nul-terminated array of strings
+ * Return: number of elements in the array
+ */
+int _arraylen(char **array)
+{
+	int count  = 0;
+
+	while (array[count] != NULL)
+		count++;
+	return (count);
+}
+
+/**
  * _strlen - Returns the length of a string
  * @s: Pointer to the string to be measured
  *

@@ -1,19 +1,63 @@
 #include "main.h"
 
+#define MAX_PATH_LENGTH 4096
+
+/**
+ * handle_cd - handles change directory command
+ * @command: an array containing the arguments of cd
+ * @program: the shell path as accessed by the user
+ * Return: void
+ */
+void  handle_cd(char **command, char *program)
+{
+	char *path, *cwd = NULL, *owd = NULL;
+
+	if (!command[1])
+	{
+		path = getenv("HOME");
+		if(!path)
+			path = getcwd(cwd, MAX_PATH_LENGTH);
+	}
+	else
+		path = command[1];
+	if (command[1] && _strcmp(command[1], "-") == 0)
+	{
+		path = getenv("OLDPWD");
+		if (!path)
+			path = getcwd(cwd, MAX_PATH_LENGTH);
+		_puts(path, 1, 1);
+	}
+	owd  = getcwd(cwd, MAX_PATH_LENGTH);
+	if (chdir(path) == -1)
+	{
+		if (isatty(STDIN_FILENO))
+			panic("No such file or directory", command, program, 0);
+		else
+		{
+			command[1] = NULL;
+			panic(_strncat("can't cd to ", path), command, program, 0);
+		}
+	}
+	setenv("PWD", getcwd(cwd, MAX_PATH_LENGTH), 1);
+	setenv("OLDPWD", owd, 1);
+	free(cwd);
+	free(owd);
+
+}
+
 /**
  * handle_env - prints the current environment
  */
 void handle_env(void)
 {
-	char **env = environ;
+	int i = 0;
 
-	while (*env != NULL)
+	while (environ[i])
 	{
 
-		_puts(*env, 1, 1);
-		env++;
+		_puts(environ[i], 1, 1);
+		i++;
 	}
-	exit(0);
 }
 
 /**
@@ -21,7 +65,7 @@ void handle_env(void)
  * @command: user input
  * @program: the program name
  */
-void handle_exit(char **command, char *program)
+void  handle_exit(char **command, char *program)
 {
 	int code;
 	char *msg;
@@ -35,6 +79,7 @@ void handle_exit(char **command, char *program)
 			msg = _strncat("Illegal number: ", command[1]);
 			command[1] = NULL;
 			panic(msg,  command, program, 2);
+			return;
 		}
 
 		exit(code);
@@ -47,17 +92,44 @@ void handle_exit(char **command, char *program)
  * @command: user input
  * @program: program name
  */
-void handle_special(char **command, char *program)
+int handle_special(char **command, char *program)
 {
 	char *cmd = command[0];
-
+	int i, res = 0;
 
 	if (_strcmp(cmd, "env") == 0)
 		handle_env();
 	/* If the user typed 'exit' then exit gracefully */
-	if (_strcmp(cmd, "exit") == 0)
+	else if (_strcmp(cmd, "exit") == 0)
 		handle_exit(command, program);
 	/* If user typed cd, then call chdir and update PWD value */
-	if (_strcmp(cmd, "cd") == 0)
-		handle_cd(command, program);
+	else if (_strcmp(cmd, "cd") == 0)
+		 handle_cd(command, program);
+
+	else if(_strcmp(cmd, "setenv") == 0)
+	{
+		if(_arraylen(command) != 3)
+		{
+			panic("Invalid number of arguments", command, program, 1);
+			return (0);
+		}
+		setenv(command[1], command[2], 1);
+	}
+	else if(_strcmp(cmd, "unsetenv") == 0)
+	{
+		if (!command[1])
+		{
+			panic("Invalid number of arguments", command, program, 1);
+			return (0);
+		}
+		i = 1;
+		while (command[i])
+		{
+			unsetenv(command[i]);
+			i++;
+		}
+	}
+	else
+		res = -1;
+	return (res);
 }

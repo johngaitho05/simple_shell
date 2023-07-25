@@ -32,12 +32,13 @@ int _atoi(char *str)
  * @code: exit code
  * Return: 1 to indicate fail
  */
-int panic(char *msg, char **command, char *program, int code)
+void panic(char *msg, char **command, char *program, int code)
 {
 
 	int i = 0;
 	char *error;
 	int interactive = isatty(STDIN_FILENO);
+	char str_code[20];
 
 	if (program)
 	{
@@ -58,7 +59,8 @@ int panic(char *msg, char **command, char *program, int code)
 	}
 	_puts(msg, 2, 1);
 	free(error); /* _strncat returns a malloc object, so we need to free it */
-	exit(code);
+	sprintf(str_code, "%d", code);
+	setenv("EXIT_CODE", str_code, 1);
 }
 
 /**
@@ -122,16 +124,33 @@ char **_strtok(char *buffer, const char *delim)
 	int count = 0, size = BUFFER_SIZE, bytes_count = 0, required, length;
 	char **result = malloc(sizeof(char) * BUFFER_SIZE);
 	char **resized, *token;
+	char *var = NULL;
+	char *mypid = malloc(10);
 
+	sprintf(mypid, "%d", getpid());
 	if (result == NULL)
-		panic("Memory allocation failed",  NULL, NULL, 1);
+	{
+		panic("Memory allocation failed", NULL, NULL, 1);
+		return (NULL);
+	}
 
 	token = _strtok_helper(buffer, delim);
 	while (token != NULL)
 	{
 		token = _strip(token, " \n\r"); /* remove trailing spaces */
-		if (token[0] == '$')
-			token = getenv(_strip(token, "$")); /* Replace with the actual value */
+		if (_strcmp(token, "$$") == 0)
+			token = mypid;
+		else if (_strcmp(token, "$?") == 0)
+			var = "EXIT_CODE";
+		else if (token[0] == '$')
+			var = _strip(token, "$"); /* Replace with the actual value */
+		if(var)
+		{
+			token = getenv(var);
+			if (!token)
+				continue;
+		}
+
 		length = _strlen(token);
 		required = bytes_count + length;
 		if (required > size)
@@ -186,7 +205,7 @@ ssize_t _getline(char **lineptr, size_t *n, FILE *stream)
 			buffer = resized_buffer;
 		}
 		buffer[res++] = ch;
-		if (ch == '\n')
+		if (ch == '\n' && isatty(STDIN_FILENO))
 			break;
 	}
 	if (res == 0)

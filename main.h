@@ -16,19 +16,20 @@
 
 char *_strtok_helper(char *s, const char *delim);
 int _strlen(char *s);
+int _arraylen(char **array);
 char  *_strip(char *str, char *tokens);
 void _puts(char *str, int descriptor, int add_line_break);
 char *get_absolute_path(char *command);
 void handle_env(void);
 void handle_exit(char **command, char *program);
-void handle_special(char **command, char *program);
+void handle_cd(char **command, char *program);
+int handle_special(char **command, char *program);
 void _execute(char **command, char *program);
-void execute(char *line, char *program);
-int panic(char *msg, char **command, char *program, int code);
+int execute(char *line, char *program);
+void panic(char *msg, char **command, char *program, int code);
 int _strcmp(char *s1, char *s2);
 ssize_t _getline(char **lineptr, size_t *n, FILE *stream);
 int _atoi(char *str);
-void handle_cd(char **command, char *program);
 char *_strncat(char *s1, char *s2);
 char **_strtok(char *buffer, const char *delim);
 
