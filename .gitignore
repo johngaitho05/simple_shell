@@ -95,7 +95,6 @@ local_urls.py
 nohup.out
 tracking.dat
 nbproject
-_getline.c
 /data/
 secret.*
 hsh

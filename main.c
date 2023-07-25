@@ -19,8 +19,8 @@ int main(int argc __attribute__((unused)),
 	/* Loop until the user terminates with Ctrl + D */
 	while (_getline(&line, &len, stdin) != -1)
 	{
-		lines = _strtok(line,"\n");
-		while(lines[i])
+		lines = _strtok(line, "\n");
+		while (lines[i])
 		{
 			if (lines[i][0] == '\0' || lines[i][0] == '\n')
 				continue;
@@ -35,7 +35,7 @@ int main(int argc __attribute__((unused)),
 			}
 			i++;
 		}
-		if(!interactive)
+		if (!interactive)
 		{
 			code = _atoi(getenv("EXIT_CODE"));
 			unsetenv("EXIT_CODE");

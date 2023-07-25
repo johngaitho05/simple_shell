@@ -15,7 +15,7 @@ void  handle_cd(char **command, char *program)
 	if (!command[1])
 	{
 		path = getenv("HOME");
-		if(!path)
+		if (!path)
 			path = getcwd(cwd, MAX_PATH_LENGTH);
 	}
 	else
@@ -91,6 +91,7 @@ void  handle_exit(char **command, char *program)
  * handle_special - handle special commands
  * @command: user input
  * @program: program name
+ * Return: 0 if the command was executed else -1
  */
 int handle_special(char **command, char *program)
 {
@@ -99,23 +100,23 @@ int handle_special(char **command, char *program)
 
 	if (_strcmp(cmd, "env") == 0)
 		handle_env();
-	/* If the user typed 'exit' then exit gracefully */
+		/* If the user typed 'exit' then exit gracefully */
 	else if (_strcmp(cmd, "exit") == 0)
 		handle_exit(command, program);
-	/* If user typed cd, then call chdir and update PWD value */
+		/* If user typed cd, then call chdir and update PWD value */
 	else if (_strcmp(cmd, "cd") == 0)
-		 handle_cd(command, program);
+		handle_cd(command, program);
 
-	else if(_strcmp(cmd, "setenv") == 0)
+	else if (_strcmp(cmd, "setenv") == 0)
 	{
-		if(_arraylen(command) != 3)
+		if (_arraylen(command) != 3)
 		{
 			panic("Invalid number of arguments", command, program, 1);
 			return (0);
 		}
 		setenv(command[1], command[2], 1);
 	}
-	else if(_strcmp(cmd, "unsetenv") == 0)
+	else if (_strcmp(cmd, "unsetenv") == 0)
 	{
 		if (!command[1])
 		{
@@ -133,3 +134,4 @@ int handle_special(char **command, char *program)
 		res = -1;
 	return (res);
 }
+

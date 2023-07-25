@@ -1,7 +1,5 @@
 #include "main.h"
 
-#define BUFFER_SIZE 128
-
 /**
  * get_absolute_path - given a command name,
  * this function finds the absolute path to the executable
@@ -32,64 +30,6 @@ char *get_absolute_path(char *command)
 }
 
 /**
- * _execute - executes a command given argv and environment variables
- * @command: an array of args where the first arg id the program name
- * @program: the shell path as accessed by the user
- */
-void _execute(char **command, char *program)
-{
-	pid_t child_pid;
-	int status, free_path = 0, special;
-	char *path = NULL;
-	struct stat file_stat;
-	char *cmd = command[0], str_code[20];
-
-	special = handle_special(command, program);
-
-	if (special == 0)
-	{
-		setenv("EXIT_CODE", "0", 0);
-		return; /* It was special command, so we terminate */
-	}
-
-	if (stat(cmd, &file_stat) == 0)
-	{
-		if (S_ISREG(file_stat.st_mode))
-			path = cmd; /* The passed argument is an absolute file path */
-	}
-	else
-	{
-		path = get_absolute_path(cmd);
-		free_path = 1;
-	}
-
-	if (!path)
-	{
-		if (isatty(STDIN_FILENO))
-			program = NULL;
-		panic("not found", command, program, 127);
-		return;
-	}
-
-	cmd = path;
-	child_pid = fork();
-	if (child_pid == 0)
-		if (execve(cmd, command, environ) == -1)
-		{
-			panic("execve failed!", command, program, 1);
-			return;
-		}
-
-	/* Wait for the child process to execute */
-	wait(&status);
-	sprintf(str_code, "%d", WEXITSTATUS(status));
-	setenv("EXIT_CODE", str_code, 1);
-	if (free_path)
-		free(path);
-
-}
-
-/**
  * remove_comment - replaces '#' with null thus
  * ignoring everything that comes after
  * @buffer: the input string
@@ -113,9 +53,77 @@ void remove_comment(char *buffer)
 }
 
 /**
+ * runcmd - execute the command
+ * @command: the user input
+ * @cmd: path to the executable
+ * @program: the shell name as typed by the user
+ */
+void runcmd(char **command, char *cmd, char *program)
+{
+	pid_t child_pid;
+	int status;
+	char str_code[20];
+
+	child_pid = fork();
+	if (child_pid == 0)
+		if (execve(cmd, command, environ) == -1)
+		{
+			panic("execve failed!", command, program, 1);
+			return;
+		}
+	wait(&status); /* Wait for the child process to execute */
+	sprintf(str_code, "%d", WEXITSTATUS(status));
+	setenv("EXIT_CODE", str_code, 1);
+
+}
+
+/**
+ * _execute - executes a command given argv and environment variables
+ * @command: an array of args where the first arg id the program name
+ * @program: the shell path as typed by the user
+ */
+void _execute(char **command, char *program)
+{
+	int free_path = 0;
+	char *path = NULL, *cmd = command[0];
+	struct stat file_stat;
+
+	if (handle_special(command, program) == 0)
+	{
+		setenv("EXIT_CODE", "0", 0);
+		return; /* It was special command, so we terminate */
+	}
+	printf("computing path:%s\n", cmd);
+	if (stat(cmd, &file_stat) == 0)
+	{
+		if (S_ISREG(file_stat.st_mode))
+			path = cmd; /* The passed argument is an absolute file path */
+	}
+	else
+	{
+		path = get_absolute_path(cmd);
+		free_path = 1;
+	}
+	printf("computed path:%s\n", path);
+	if (!path)
+	{
+		if (isatty(STDIN_FILENO))
+			program = NULL;
+		panic("not found", command, program, 127);
+		return;
+	}
+	cmd = path;
+	runcmd(command, cmd, program);
+	if (free_path)
+		free(path);
+}
+
+
+/**
  * execute - executes the command typed by user
  * @line: the command to execute
- * @program: the shell path as accessed by the user
+ * @program: the shell path as typed by the user
+ * Return: 0
  */
 int execute(char *line, char *program)
 {
