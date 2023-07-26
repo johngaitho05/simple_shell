@@ -18,7 +18,7 @@ int _strlen(char *s);
 int _arraylen(char **array);
 char *_itoa(int num, char str[], int base);
 char *_strncat(char *s1, char *s2);
-char *_strcpy(char* dest, const char* src);
+char *_strcpy(char *dest, const char *src);
 int _strchr(char *s, char c);
 int _strcmp(char *s1, char *s2);
 void *_memmove(void *dest, const void *src, size_t n);
