@@ -1,6 +1,28 @@
 #include "main.h"
 
 /**
+ * _strcpy - copies a string
+ * @dest: destination string
+ * @src: source string
+ * Return: pointer to the resulting string
+ */
+char *_strcpy(char *dest, const char *src)
+{
+	char *original_dest = dest;
+
+	while (*src != '\0')
+	{
+		*dest = *src;
+		dest++;
+		src++;
+	}
+
+	*dest = '\0';
+
+	return (original_dest);
+}
+
+/**
  * _atoi- convert string to int
  * @str: the string to convert
  * Return: the converted number
@@ -12,7 +34,7 @@ int _atoi(char *str)
 
 	for (i = 0; str[i] != '\0'; i++)
 	{
-		if (!strchr(allowed_chars, str[i]))
+		if (!_strchr(allowed_chars, str[i]))
 		{
 			num = -1;
 			break;
@@ -61,28 +83,6 @@ int _strlen(char *s)
 	}
 
 	return (len);
-}
-
-/**
- * _puts - prints a string, followed by a new line, to stdout.
- * @str: the string to print.
- * @add_line_break: whether the string should end with a new line or not.
- * @descriptor: Where to print (1 for stdout, 2 for stderror)
- * 1 for yes and 0 for no
- * Return: void.
- */
-void _puts(char *str, int descriptor, int add_line_break)
-{
-	int len = 0;
-
-
-	while (str[len] != '\0')
-		len++;
-
-	write(descriptor, str, len);
-
-	if (add_line_break)
-		write(descriptor, "\n", 1);
 }
 
 /**

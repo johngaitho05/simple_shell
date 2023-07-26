@@ -8,7 +8,7 @@
  */
 char *get_absolute_path(char *command)
 {
-	char *path_string = strdup(getenv("PATH")), *dir, *file;
+	char *path_string = _strdup(getenv("PATH")), *dir, *file;
 	char **path_dirs = _strtok(path_string, ":");
 	int i = 0;
 	struct stat file_stat;

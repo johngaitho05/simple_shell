@@ -1,5 +1,4 @@
 #include "main.h"
-
 #define MAX_PATH_LENGTH 4096
 
 /**

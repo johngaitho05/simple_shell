@@ -11,13 +11,18 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <errno.h>
-#include "string.h"
 #include "syscall.h"
 
-
-
+int _atoi(char *str);
+void reverse(char str[], int length);
 int _strlen(char *s);
 int _arraylen(char **array);
+char *_itoa(int num, char str[], int base);
+char *_strncat(char *s1, char *s2);
+char *_strcpy(char* dest, const char* src);
+int _strchr(char *s, char c);
+void *_memmove(void *dest, const void *src, size_t n);
+char *_strdup(char *str);
 char  *_strip(char *str, char *tokens);
 void _puts(char *str, int descriptor, int add_line_break);
 char *get_absolute_path(char *command);
@@ -33,15 +38,11 @@ int execute(char *line, char *program);
 void panic(char *msg, char **command, char *program, int code);
 int _strcmp(char *s1, char *s2);
 ssize_t _getline(char **lineptr, size_t *n, FILE *stream);
-int _atoi(char *str);
-void reverse(char str[], int length);
-char *_itoa(int num, char str[], int base);
-char *_strncat(char *s1, char *s2);
 
 extern char **environ;
 
-#endif
-
 #ifndef BUFFER_SIZE
 #define BUFFER_SIZE 128
+#endif
+
 #endif
