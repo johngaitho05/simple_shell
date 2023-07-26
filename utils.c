@@ -141,4 +141,3 @@ int handle_special(char *buffer, char **command, char *program, char **lines)
 		res = -1;
 	return (res);
 }
-

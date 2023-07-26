@@ -45,5 +45,3 @@ ssize_t _getline(char **lineptr, size_t *n, FILE *stream)
 	*n = bufsize;
 	return (res); /* Return the number of characters read */
 }
-
-

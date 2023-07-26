@@ -120,4 +120,3 @@ char  *_strip(char *str, char *tokens)
 
 	return (str);
 }
-
