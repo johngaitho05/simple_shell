@@ -1,11 +1,11 @@
 #include "main.h"
 
 /**
- * reverse - reverses a string in place
+ * _reverse - reverses a string in place
  * @str: the string to reverse
  * @length: number of bytes to reverse
  */
-void reverse(char str[], int length)
+void _reverse(char str[], int length)
 {
 	int start = 0;
 	int end = length - 1;
@@ -54,7 +54,7 @@ char *_itoa(int num, char str[], int base)
 
 	str[i] = '\0';
 
-	reverse(str, i);
+	_reverse(str, i);
 
 	return (str);
 }

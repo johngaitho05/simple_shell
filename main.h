@@ -13,7 +13,7 @@
 #include "syscall.h"
 
 int _atoi(char *str);
-void reverse(char str[], int length);
+void _reverse(char str[], int length);
 int _strlen(char *s);
 int _arraylen(char **array);
 char *_itoa(int num, char str[], int base);
