@@ -27,7 +27,8 @@ int main(int argc __attribute__((unused)),
 
 	if (!interactive)
 		program = argv[0];
-
+    else
+		_puts("$", STDOUT_FILENO, 0);
 	/* Loop until the user terminates with Ctrl + D */
 	while (_getline(&line, &len, stdin) != -1)
 	{
@@ -54,6 +55,7 @@ int main(int argc __attribute__((unused)),
 			exit(code);
 		}
 		i = 0;
+		_puts("$", STDOUT_FILENO, 0);
 	}
 	terminate(line);
 	return (0);
