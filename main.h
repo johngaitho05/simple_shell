@@ -1,5 +1,5 @@
-#ifndef MAIN_H
-#define MAIN_H
+#ifndef SIMPLE_SHELL2_MAIN_H
+#define SIMPLE_SHELL2_MAIN_H
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -11,8 +11,6 @@
 #include <unistd.h>
 #include <errno.h>
 #include "syscall.h"
-
-extern char **environ;
 
 int _atoi(char *str);
 void reverse(char str[], int length);
@@ -41,5 +39,7 @@ int execute(char *buffer, char **lines, int index, char *program);
 void panic(char *msg, char **command, char *program, int code);
 ssize_t _getline(char **lineptr, size_t *n, FILE *stream);
 void terminate(char **lines, char *line);
+
+extern char **environ;
 
 #endif
