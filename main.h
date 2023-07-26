@@ -1,5 +1,5 @@
-#ifndef MAIN_H
-#define MAIN_H
+#ifndef _MAIN_H_
+#define _MAIN_H_
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -22,14 +22,15 @@ char *_itoa(int num, char str[], int base);
 char *_strncat(char *s1, char *s2);
 char *_strcpy(char* dest, const char* src);
 int _strchr(char *s, char c);
+int _strcmp(char *s1, char *s2);
 void *_memmove(void *dest, const void *src, size_t n);
 char *_strdup(char *str);
 char  *_strip(char *str, char *tokens);
 void _puts(char *str, int descriptor, int add_line_break);
-char *get_absolute_path(char *command);
-char *update_token(char *token);
 char *_strtok_helper(char *s, const char *delim);
 char **_strtok(char *buffer, const char *delim);
+char *get_absolute_path(char *command);
+char *update_token(char *token);
 void handle_env(void);
 void handle_exit(char **command, char *program);
 void handle_cd(char **command, char *program);
@@ -37,7 +38,6 @@ int handle_special(char **command, char *program);
 void _execute(char **command, char *program);
 int execute(char *line, char *program);
 void panic(char *msg, char **command, char *program, int code);
-int _strcmp(char *s1, char *s2);
 ssize_t _getline(char **lineptr, size_t *n, FILE *stream);
 
 #endif
