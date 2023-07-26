@@ -1,12 +1,14 @@
 #include "main.h"
 
+#define MAX_BUFFER_SIZE 1000
+
 /**
  * _strcpy - copies a string
  * @dest: destination string
  * @src: source string
  * Return: pointer to the resulting string
  */
-char *_strcpy(char *dest, const char *src)
+char *_strcpy(char *dest, char *src)
 {
 	char *original_dest = dest;
 
@@ -85,6 +87,7 @@ int _strlen(char *s)
 	return (len);
 }
 
+
 /**
  * _strncat - concatenates two strings
  * @s1: the first string
@@ -93,9 +96,10 @@ int _strlen(char *s)
  */
 char *_strncat(char *s1, char *s2)
 {
-	int i = 0, j = 0, length = _strlen(s1) + _strlen(s2);
+	int i = 0, j = 0;
 
-	char *res = malloc(sizeof(char) * (length + 1));
+	static char res[MAX_BUFFER_SIZE];
+
 
 	while (s1[i])
 	{

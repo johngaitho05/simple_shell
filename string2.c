@@ -59,20 +59,25 @@ void *_memmove(void *dest, const void *src, size_t n)
 /**
  * _strchr - check whether a character exists
  * @s: the string to search the char in
- * @c: the char to search
- * Return: 1 if it exists else 0
+ * @ch: the char to search
+ * Return: pointer to the character if found else NULL
  */
-int _strchr(char *s, char c)
+char *_strchr(char *s, int ch)
 {
-	int i = 0;
+	if (s == NULL)
+		return (NULL);
 
-	while (s[i])
+	while (*s != '\0')
 	{
-		if (s[i] == c)
-			return (1);
-		i++;
+		if (*s == ch)
+			return ((char *)s);
+		s++;
 	}
-	return (0);
+
+	if (ch == '\0')
+		return ((char *)s);
+
+	return (NULL);
 }
 
 /**

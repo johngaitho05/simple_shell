@@ -34,7 +34,6 @@ void panic(char *msg, char **command, char *program, int code)
 		}
 	}
 	_puts(msg, 2, 1);
-	free(error); /* _strncat returns a malloc object, so we need to free it */
 	_itoa(code, str_code, 10);
-	setenv("EXIT_CODE", str_code, 1);
+	_setenv("EXIT_CODE", str_code, 1);
 }

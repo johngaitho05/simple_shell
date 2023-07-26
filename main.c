@@ -10,11 +10,11 @@ void terminate(char **lines, char *line)
 	int code = 0;
 	char *code_str;
 
-	code_str = getenv("EXIT_CODE");
+	code_str = _getenv("EXIT_CODE");
 	if (code_str)
 		code = _atoi(code_str);
 
-	unsetenv("EXIT_CODE");
+	_unsetenv("EXIT_CODE");
 	if (lines != NULL)
 		free(lines);
 	if (line != NULL)
@@ -48,7 +48,7 @@ int main(int argc __attribute__((unused)),
 			if (lines[i][0] == '\0' || lines[i][0] == '\n')
 				continue;
 			execute(line, lines, i, program);
-			code_str = getenv("EXIT_CODE");
+			code_str = _getenv("EXIT_CODE");
 			if (code_str)
 				code = _atoi(code_str);
 			if (code && !interactive)

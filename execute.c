@@ -8,7 +8,7 @@
  */
 char *get_absolute_path(char *command)
 {
-	char *path_string = _strdup(getenv("PATH")), *dir, *file;
+	char *path_string = _strdup(_getenv("PATH")), *dir, *file;
 	char **path_dirs = _strtok(path_string, ":");
 	int i = 0;
 	struct stat file_stat;
@@ -23,12 +23,9 @@ char *get_absolute_path(char *command)
 			{
 				free(path_dirs);
 				free(path_string);
-				free(dir);
 				return (file);
 			}
 		i++;
-		free(dir);
-		free(file);
 	}
 
 	free(path_dirs);
@@ -65,9 +62,8 @@ void remove_comment(char *buffer)
  * @command: the user input
  * @cmd: path to the executable
  * @program: the shell name as typed by the user
- * @_free: whether cmd is freeable or not
  */
-void runcmd(char **command, char *cmd, char *program, int _free)
+void runcmd(char **command, char *cmd, char *program)
 {
 	pid_t child_pid;
 	int status;
@@ -82,9 +78,7 @@ void runcmd(char **command, char *cmd, char *program, int _free)
 		}
 	wait(&status); /* Wait for the child process to execute */
 	_itoa(WEXITSTATUS(status), str_code, 10);
-	setenv("EXIT_CODE", str_code, 1);
-	if (_free)
-		free(cmd);
+	_setenv("EXIT_CODE", str_code, 1);
 
 }
 
@@ -99,11 +93,10 @@ void _execute(char *buffer, char **command, char *program, char **lines)
 {
 	char *path = NULL, *cmd = command[0];
 	struct stat file_stat;
-	int _free = 0;
 
 	if (handle_special(buffer, command, program, lines) == 0)
 	{
-		setenv("EXIT_CODE", "0", 0);
+		_setenv("EXIT_CODE", "0", 0);
 		return; /* It was special command, so we terminate */
 	}
 	if (stat(cmd, &file_stat) == 0)
@@ -114,7 +107,6 @@ void _execute(char *buffer, char **command, char *program, char **lines)
 	else
 	{
 		path = get_absolute_path(cmd);
-		_free = 1;
 	}
 
 	if (!path)
@@ -124,7 +116,7 @@ void _execute(char *buffer, char **command, char *program, char **lines)
 		panic("not found", command, program, 127);
 		return;
 	}
-	runcmd(command, path, program, _free);
+	runcmd(command, path, program);
 }
 
 

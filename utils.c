@@ -2,6 +2,19 @@
 #define MAX_PATH_LENGTH 4096
 
 /**
+ * _exit_cd - handle_cd helper
+ * @cwd: current working directory
+ * @owd: old working directory
+ */
+void _exit_cd(char *cwd, char *owd)
+{
+	_setenv("PWD", getcwd(cwd, MAX_PATH_LENGTH), 1);
+	_setenv("OLDPWD", owd, 1);
+	free(cwd);
+	free(owd);
+}
+
+/**
  * handle_cd - handles change directory command
  * @command: an array containing the arguments of cd
  * @program: the shell path as accessed by the user
@@ -13,7 +26,7 @@ void  handle_cd(char **command, char *program)
 
 	if (!command[1])
 	{
-		path = getenv("HOME");
+		path = _getenv("HOME");
 		if (!path)
 			path = getcwd(cwd, MAX_PATH_LENGTH);
 	}
@@ -21,10 +34,20 @@ void  handle_cd(char **command, char *program)
 		path = command[1];
 	if (command[1] && _strcmp(command[1], "-") == 0)
 	{
-		path = getenv("OLDPWD");
+		path = _getenv("OLDPWD");
 		if (!path)
-			path = getcwd(cwd, MAX_PATH_LENGTH);
-		_puts(path, 1, 1);
+		{
+			if (!isatty(STDOUT_FILENO))
+				path = getcwd(cwd, MAX_PATH_LENGTH);
+			else
+			{
+				command[1] = NULL;
+				panic("OLDPWD not set", command, program, 1);
+				return;
+			}
+		}
+		if (path)
+			_puts(path, 1, 1);
 	}
 	owd  = getcwd(cwd, MAX_PATH_LENGTH);
 	if (chdir(path) == -1)
@@ -37,11 +60,7 @@ void  handle_cd(char **command, char *program)
 			panic(_strncat("can't cd to ", path), command, program, 0);
 		}
 	}
-	setenv("PWD", getcwd(cwd, MAX_PATH_LENGTH), 1);
-	setenv("OLDPWD", owd, 1);
-	free(cwd);
-	free(owd);
-
+	_exit_cd(cwd, owd);
 }
 
 /**
@@ -121,7 +140,7 @@ int handle_special(char *buffer, char **command, char *program, char **lines)
 			panic("Invalid number of arguments", command, program, 1);
 			return (0);
 		}
-		setenv(command[1], command[2], 1);
+		_setenv(command[1], command[2], 1);
 	}
 	else if (_strcmp(cmd, "unsetenv") == 0)
 	{
@@ -133,7 +152,7 @@ int handle_special(char *buffer, char **command, char *program, char **lines)
 		i = 1;
 		while (command[i])
 		{
-			unsetenv(command[i]);
+			_unsetenv(command[i]);
 			i++;
 		}
 	}

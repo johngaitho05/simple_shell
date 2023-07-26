@@ -69,7 +69,7 @@ char *update_token(char *token)
 	else if (token[0] == '$')
 		var = _strip(token, "$"); /* Replace with the actual value */
 	if (var)
-		token = getenv(var);
+		token = _getenv(var);
 
 	free(mypid);
 	return (token);
