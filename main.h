@@ -1,17 +1,18 @@
-#ifndef SIMPLE_SHELL2_MAIN_H
-#define SIMPLE_SHELL2_MAIN_H
-
+#ifndef MAIN_H
+#define MAIN_H
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include "sys/unistd.h"
-#include "sys/wait.h"
+#include "unistd.h"
+#include "wait.h"
 #include <fcntl.h>
 #include <unistd.h>
 #include <errno.h>
 #include "syscall.h"
+
+extern char **environ;
 
 int _atoi(char *str);
 void reverse(char str[], int length);
@@ -38,11 +39,5 @@ int execute(char *line, char *program);
 void panic(char *msg, char **command, char *program, int code);
 int _strcmp(char *s1, char *s2);
 ssize_t _getline(char **lineptr, size_t *n, FILE *stream);
-
-extern char **environ;
-
-#ifndef BUFFER_SIZE
-#define BUFFER_SIZE 128
-#endif
 
 #endif

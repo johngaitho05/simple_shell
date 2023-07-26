@@ -18,16 +18,16 @@ ssize_t _getline(char **lineptr, size_t *n, FILE *stream)
 	if (buffer == NULL)
 	{
 		/* Allocate memory for the buffer initially */
-		buffer = (char *)malloc(BUFFER_SIZE);
+		buffer = (char *)malloc(128);
 		if (buffer == NULL)
 			return (-1); /* Memory allocation failure */
-		bufsize = BUFFER_SIZE;
+		bufsize = 128;
 	}
 	while ((ch = fgetc(stream)) != EOF)
 	{
 		if (res >= bufsize - 1)
 		{ /* Make room for the null-terminator */
-			bufsize += BUFFER_SIZE;
+			bufsize += 128;
 			resized_buffer = (char *)realloc(buffer, bufsize);
 			if (resized_buffer == NULL)
 				return (-1); /* Memory allocation failure */

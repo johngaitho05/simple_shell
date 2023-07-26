@@ -83,8 +83,8 @@ char *update_token(char *token)
  */
 char **_strtok(char *buffer, const char *delim)
 {
-	int count = 0, size = BUFFER_SIZE, bytes_count = 0, required, length;
-	char **result = malloc(sizeof(char) * BUFFER_SIZE);
+	int count = 0, size = 128, bytes_count = 0, required, length;
+	char **result = malloc(sizeof(char) * 128);
 	char **resized, *token;
 
 	if (result == NULL)
@@ -105,11 +105,11 @@ char **_strtok(char *buffer, const char *delim)
 		required = bytes_count + length;
 		if (required > size)
 		{
-			resized = realloc(result, sizeof(char) * (size + BUFFER_SIZE));
+			resized = realloc(result, sizeof(char) * (size + 128));
 			if (resized == NULL)
 				panic("Memory allocation failed",  NULL, NULL, 1);
 			result = resized;
-			size += BUFFER_SIZE;
+			size += 128;
 		}
 		result[count] = token;
 		bytes_count += length;
