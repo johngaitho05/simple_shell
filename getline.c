@@ -7,6 +7,7 @@
  * @stream: the input
  * Return: number of characters read
  */
+
 ssize_t _getline(char **lineptr, size_t *n, FILE *stream)
 {
 	int ch;
@@ -27,7 +28,7 @@ ssize_t _getline(char **lineptr, size_t *n, FILE *stream)
 	{
 		if (res >= bufsize - 1)
 		{ /* Make room for the null-terminator */
-			bufsize += 128;
+			bufsize += 1;
 			resized_buffer = (char *)realloc(buffer, bufsize);
 			if (resized_buffer == NULL)
 				return (-1); /* Memory allocation failure */
@@ -44,3 +45,5 @@ ssize_t _getline(char **lineptr, size_t *n, FILE *stream)
 	*n = bufsize;
 	return (res); /* Return the number of characters read */
 }
+
+

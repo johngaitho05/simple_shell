@@ -101,4 +101,4 @@ hsh
 allowed_functions
 runchecker.bash
 /TEST_SUITE/
-/test.c
+/tests/

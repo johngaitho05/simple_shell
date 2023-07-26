@@ -94,6 +94,7 @@ int _strlen(char *s)
 char *_strncat(char *s1, char *s2)
 {
 	int i = 0, j = 0, length = _strlen(s1) + _strlen(s2);
+
 	char *res = malloc(sizeof(char) * (length + 1));
 
 	while (s1[i])
@@ -107,5 +108,6 @@ char *_strncat(char *s1, char *s2)
 		j++;
 	}
 	res[i + j] = '\0';
+
 	return (res);
 }

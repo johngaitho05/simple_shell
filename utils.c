@@ -64,7 +64,7 @@ void handle_env(void)
  * @command: user input
  * @program: the program name
  */
-void  handle_exit(char **command, char *program)
+void  handle_exit(char *buffer, char **command, char *program, char **lines)
 {
 	int code;
 	char *msg;
@@ -80,9 +80,13 @@ void  handle_exit(char **command, char *program)
 			panic(msg,  command, program, 2);
 			return;
 		}
-
+		free(command);
+		free(lines);
 		exit(code);
 	}
+	free(buffer);
+	free(lines);
+	free(command);
 	exit(0);
 }
 
@@ -92,7 +96,7 @@ void  handle_exit(char **command, char *program)
  * @program: program name
  * Return: 0 if the command was executed else -1
  */
-int handle_special(char **command, char *program)
+int handle_special(char *buffer, char **command, char *program, char **lines)
 {
 	char *cmd = command[0];
 	int i, res = 0;
@@ -101,7 +105,7 @@ int handle_special(char **command, char *program)
 		handle_env();
 		/* If the user typed 'exit' then exit gracefully */
 	else if (_strcmp(cmd, "exit") == 0)
-		handle_exit(command, program);
+		handle_exit(buffer, command, program, lines);
 		/* If user typed cd, then call chdir and update PWD value */
 	else if (_strcmp(cmd, "cd") == 0)
 		handle_cd(command, program);

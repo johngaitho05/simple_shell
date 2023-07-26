@@ -71,6 +71,7 @@ char *update_token(char *token)
 	if (var)
 		token = getenv(var);
 
+	free(mypid);
 	return (token);
 }
 
@@ -118,5 +119,6 @@ char **_strtok(char *buffer, const char *delim)
 
 	}
 	result[count] = NULL;
+	free(token);
 	return (result);
 }

@@ -20,11 +20,19 @@ char *get_absolute_path(char *command)
 		file = _strncat(dir, command);
 		if (stat(file, &file_stat) == 0)
 			if (S_ISREG(file_stat.st_mode))
+			{
+				free(path_dirs);
+				free(path_string);
+				free(dir);
 				return (file);
+			}
 		i++;
+		free(dir);
+		free(file);
 	}
 
 	free(path_dirs);
+	free(path_string);
 	return (NULL);
 
 }
@@ -58,7 +66,7 @@ void remove_comment(char *buffer)
  * @cmd: path to the executable
  * @program: the shell name as typed by the user
  */
-void runcmd(char **command, char *cmd, char *program)
+void runcmd(char **command, char *cmd, char *program, int _free)
 {
 	pid_t child_pid;
 	int status;
@@ -74,6 +82,8 @@ void runcmd(char **command, char *cmd, char *program)
 	wait(&status); /* Wait for the child process to execute */
 	_itoa(WEXITSTATUS(status), str_code, 10);
 	setenv("EXIT_CODE", str_code, 1);
+	if (_free)
+		free(cmd);
 
 }
 
@@ -82,13 +92,13 @@ void runcmd(char **command, char *cmd, char *program)
  * @command: an array of args where the first arg id the program name
  * @program: the shell path as typed by the user
  */
-void _execute(char **command, char *program)
+void _execute(char *buffer, char **command, char *program, char **lines)
 {
-	int free_path = 0;
 	char *path = NULL, *cmd = command[0];
 	struct stat file_stat;
+	int _free = 0;
 
-	if (handle_special(command, program) == 0)
+	if (handle_special(buffer, command, program, lines) == 0)
 	{
 		setenv("EXIT_CODE", "0", 0);
 		return; /* It was special command, so we terminate */
@@ -101,8 +111,9 @@ void _execute(char **command, char *program)
 	else
 	{
 		path = get_absolute_path(cmd);
-		free_path = 1;
+		_free = 1;
 	}
+
 	if (!path)
 	{
 		if (isatty(STDIN_FILENO))
@@ -110,10 +121,7 @@ void _execute(char **command, char *program)
 		panic("not found", command, program, 127);
 		return;
 	}
-	cmd = path;
-	runcmd(command, cmd, program);
-	if (free_path)
-		free(path);
+	runcmd(command, path, program, _free);
 }
 
 
@@ -123,9 +131,9 @@ void _execute(char **command, char *program)
  * @program: the shell path as typed by the user
  * Return: 0
  */
-int execute(char *line, char *program)
+int execute(char *buffer, char **lines, int index, char *program)
 {
-	char **commands, **command;
+	char **commands, **command, *line = lines[index];
 	int i = 0;
 
 	remove_comment(line);
@@ -135,9 +143,10 @@ int execute(char *line, char *program)
 	while (commands[i])
 	{
 		command = _strtok(commands[i], " ");
-		_execute(command, program);
+		_execute(buffer, command, program, lines);
 		i++;
 	}
 	free(command);
+	free(commands);
 	return (0);
 }

@@ -4,9 +4,11 @@
  * terminate - terminates the program
  * @line: user input buffer
  */
-void terminate(char *line)
+void terminate(char **lines, char *line)
 {
 	unsetenv("EXIT_CODE");
+	if(lines != NULL)
+		free(lines);
 	if (line != NULL)
 		free(line);
 }
@@ -37,13 +39,14 @@ int main(int argc __attribute__((unused)),
 		{
 			if (lines[i][0] == '\0' || lines[i][0] == '\n')
 				continue;
-			execute(lines[i], program);
+			execute(line, lines, i, program);
 			code_str = getenv("EXIT_CODE");
 			if (code_str)
 				code = _atoi(code_str);
 			if (code && !interactive)
 			{
 				unsetenv("EXIT_CODE");
+				terminate(lines, line);
 				exit(code);
 			}
 			i++;
@@ -52,11 +55,13 @@ int main(int argc __attribute__((unused)),
 		{
 			code = _atoi(getenv("EXIT_CODE"));
 			unsetenv("EXIT_CODE");
+			terminate(lines, line);
 			exit(code);
 		}
 		i = 0;
 		_puts("$", STDOUT_FILENO, 0);
+		free(lines);
 	}
-	terminate(line);
+	free(line);
 	return (0);
 }
