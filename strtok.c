@@ -56,8 +56,7 @@ cont:
  */
 char *update_token(char *token)
 {
-	char *var = NULL;
-	char *mypid = malloc(10);
+	static char mypid[10];
 
 	_itoa(getpid(), mypid, 10);
 
@@ -65,13 +64,12 @@ char *update_token(char *token)
 	if (_strcmp(token, "$$") == 0)
 		token = mypid;
 	else if (_strcmp(token, "$?") == 0)
-		var = "EXIT_CODE";
+	{
+		token = _getenv("EXIT_CODE");
+	}
 	else if (token[0] == '$')
-		var = _strip(token, "$"); /* Replace with the actual value */
-	if (var)
-		token = _getenv(var);
+		token = _getenv(_strip(token, "$")); /* Replace with the actual value */
 
-	free(mypid);
 	return (token);
 }
 
