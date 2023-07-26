@@ -3,14 +3,24 @@
 /**
  * terminate - terminates the program
  * @line: user input buffer
+ * @lines: array of commands
  */
 void terminate(char **lines, char *line)
 {
+	int code = 0;
+	char *code_str;
+
+	code_str = getenv("EXIT_CODE");
+	if (code_str)
+		code = _atoi(code_str);
+
 	unsetenv("EXIT_CODE");
-	if(lines != NULL)
+	if (lines != NULL)
 		free(lines);
 	if (line != NULL)
 		free(line);
+
+	exit(code);
 }
 
 /**
@@ -29,7 +39,7 @@ int main(int argc __attribute__((unused)),
 
 	if (!interactive)
 		program = argv[0];
-    else
+	else
 		_puts("$", STDOUT_FILENO, 0);
 	/* Loop until the user terminates with Ctrl + D */
 	while (_getline(&line, &len, stdin) != -1)
@@ -44,20 +54,11 @@ int main(int argc __attribute__((unused)),
 			if (code_str)
 				code = _atoi(code_str);
 			if (code && !interactive)
-			{
-				unsetenv("EXIT_CODE");
 				terminate(lines, line);
-				exit(code);
-			}
 			i++;
 		}
 		if (!interactive)
-		{
-			code = _atoi(getenv("EXIT_CODE"));
-			unsetenv("EXIT_CODE");
 			terminate(lines, line);
-			exit(code);
-		}
 		i = 0;
 		_puts("$", STDOUT_FILENO, 0);
 		free(lines);

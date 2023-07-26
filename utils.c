@@ -61,8 +61,10 @@ void handle_env(void)
 
 /**
  * handle_exit - exit with the given code
+ * @buffer: the command string as typed by the user
  * @command: user input
  * @program: the program name
+ * @lines: array of commands extracted from buffer
  */
 void  handle_exit(char *buffer, char **command, char *program, char **lines)
 {
@@ -92,8 +94,10 @@ void  handle_exit(char *buffer, char **command, char *program, char **lines)
 
 /**
  * handle_special - handle special commands
+ * @buffer: the command string as typed by the user
  * @command: user input
  * @program: program name
+ * @lines: array of commands extracted from buffer
  * Return: 0 if the command was executed else -1
  */
 int handle_special(char *buffer, char **command, char *program, char **lines)

@@ -65,6 +65,7 @@ void remove_comment(char *buffer)
  * @command: the user input
  * @cmd: path to the executable
  * @program: the shell name as typed by the user
+ * @_free: whether cmd is freeable or not
  */
 void runcmd(char **command, char *cmd, char *program, int _free)
 {
@@ -89,8 +90,10 @@ void runcmd(char **command, char *cmd, char *program, int _free)
 
 /**
  * _execute - executes a command given argv and environment variables
+ * @buffer: the command string as typed by the user
  * @command: an array of args where the first arg id the program name
  * @program: the shell path as typed by the user
+ * @lines: array of commands extracted from buffer
  */
 void _execute(char *buffer, char **command, char *program, char **lines)
 {
@@ -127,8 +130,10 @@ void _execute(char *buffer, char **command, char *program, char **lines)
 
 /**
  * execute - executes the command typed by user
- * @line: the command to execute
+ * @buffer: the command string as typed by the user
  * @program: the shell path as typed by the user
+ * @lines: array of commands extracted from buffer
+ * @index: the index of the command to execute
  * Return: 0
  */
 int execute(char *buffer, char **lines, int index, char *program)
