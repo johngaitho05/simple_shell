@@ -14,7 +14,7 @@ void terminate(char **lines, char *line)
 	if (code_str)
 		code = _atoi(code_str);
 
-	_unsetenv("EXIT_CODE");
+	unsetenv("EXIT_CODE");
 	if (lines != NULL)
 		free(lines);
 	if (line != NULL)

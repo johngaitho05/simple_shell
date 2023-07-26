@@ -78,7 +78,7 @@ void runcmd(char **command, char *cmd, char *program)
 		}
 	wait(&status); /* Wait for the child process to execute */
 	_itoa(WEXITSTATUS(status), str_code, 10);
-	_setenv("EXIT_CODE", str_code, 1);
+	setenv("EXIT_CODE", str_code, 1);
 
 }
 
@@ -96,7 +96,7 @@ void _execute(char *buffer, char **command, char *program, char **lines)
 
 	if (handle_special(buffer, command, program, lines) == 0)
 	{
-		_setenv("EXIT_CODE", "0", 0);
+		setenv("EXIT_CODE", "0", 0);
 		return; /* It was special command, so we terminate */
 	}
 	if (stat(cmd, &file_stat) == 0)

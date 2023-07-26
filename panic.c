@@ -35,5 +35,5 @@ void panic(char *msg, char **command, char *program, int code)
 	}
 	_puts(msg, 2, 1);
 	_itoa(code, str_code, 10);
-	_setenv("EXIT_CODE", str_code, 1);
+	setenv("EXIT_CODE", str_code, 1);
 }
