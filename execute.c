@@ -72,7 +72,7 @@ void runcmd(char **command, char *cmd, char *program)
 			return;
 		}
 	wait(&status); /* Wait for the child process to execute */
-	sprintf(str_code, "%d", WEXITSTATUS(status));
+	_itoa(WEXITSTATUS(status), str_code, 10);
 	setenv("EXIT_CODE", str_code, 1);
 
 }

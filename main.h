@@ -34,6 +34,8 @@ void panic(char *msg, char **command, char *program, int code);
 int _strcmp(char *s1, char *s2);
 ssize_t _getline(char **lineptr, size_t *n, FILE *stream);
 int _atoi(char *str);
+void reverse(char str[], int length);
+char *_itoa(int num, char str[], int base);
 char *_strncat(char *s1, char *s2);
 
 extern char **environ;

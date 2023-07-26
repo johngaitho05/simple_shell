@@ -54,7 +54,6 @@ int main(int argc __attribute__((unused)),
 			unsetenv("EXIT_CODE");
 			exit(code);
 		}
-		unsetenv("EXIT_CODE");
 		i = 0;
 		_puts("$", STDOUT_FILENO, 0);
 	}

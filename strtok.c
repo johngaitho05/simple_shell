@@ -59,7 +59,7 @@ char *update_token(char *token)
 	char *var = NULL;
 	char *mypid = malloc(10);
 
-	sprintf(mypid, "%d", getpid());
+	_itoa(getpid(), mypid, 10);
 
 	token = _strip(token, " \n\r"); /* remove trailing spaces */
 	if (_strcmp(token, "$$") == 0)
