@@ -16,7 +16,7 @@ void terminate(char **lines, char *line)
 
 	unsetenv("EXIT_CODE");
 	if (lines != NULL)
-		free(lines);
+		free_tokens(lines, -1);
 	if (line != NULL)
 		free(line);
 
@@ -58,7 +58,7 @@ int main(int argc __attribute__((unused)),
 		if (!interactive)
 			terminate(lines, line);
 		i = 0;
-		free(lines);
+		free_tokens(lines, -1);
 	}
 	free(line);
 	return (0);

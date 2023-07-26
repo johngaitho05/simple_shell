@@ -21,14 +21,14 @@ char *get_absolute_path(char *command)
 		if (stat(file, &file_stat) == 0)
 			if (S_ISREG(file_stat.st_mode))
 			{
-				free(path_dirs);
+				free_tokens(path_dirs, -1);
 				free(path_string);
 				return (file);
 			}
 		i++;
 	}
 
-	free(path_dirs);
+	free_tokens(path_dirs, -1);
 	free(path_string);
 	return (NULL);
 
@@ -142,8 +142,8 @@ int execute(char *buffer, char **lines, int index, char *program)
 		command = _strtok(commands[i], " ");
 		_execute(buffer, command, program, lines);
 		i++;
+		free_tokens(command, -1);
 	}
-	free(command);
-	free(commands);
+	free_tokens(commands, -1);
 	return (0);
 }

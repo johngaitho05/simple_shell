@@ -1,7 +1,5 @@
 #include "main.h"
 
-#define MAX_BUFFER_SIZE 1000
-
 /**
  * _strcpy - copies a string
  * @dest: destination string

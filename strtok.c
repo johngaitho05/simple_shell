@@ -1,6 +1,24 @@
 #include "main.h"
 
 /**
+ * free_tokens - frees an array of malloc strings
+ * @tokens: the array to free
+ * @skip_index: the element to skip
+ */
+void free_tokens(char **tokens, int skip_index)
+{
+	int i;
+
+	for (i = 0 ; i < _arraylen(tokens); i++)
+	{
+		if (i != skip_index)
+			free(tokens[i]);
+	}
+
+	free(tokens);
+}
+
+/**
  * _strtok_helper - computes the next substring
  * given the buffer string and the delimiters
  * @s: the string from which to extract a substring
@@ -89,6 +107,7 @@ char **_strtok(char *buffer, const char *delim)
 	if (result == NULL)
 	{
 		panic("Memory allocation failed", NULL, NULL, 1);
+		free(result);
 		return (NULL);
 	}
 
@@ -110,11 +129,10 @@ char **_strtok(char *buffer, const char *delim)
 			result = resized;
 			size += 128;
 		}
-		result[count] = token;
+		result[count] = _strdup(token);
 		bytes_count += length;
 		count++;
 		token = _strtok_helper(NULL, delim);
-
 	}
 	result[count] = NULL;
 	free(token);

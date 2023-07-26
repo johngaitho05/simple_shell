@@ -1,7 +1,19 @@
 #include "main.h"
 #define MAX_PATH_LENGTH 4096
 
-
+/**
+ * _exit_cd - handle_cd helper
+ * @cwd: current working directory
+ * @owd: old working directory
+ */
+void _exit_cd(char *cwd, char *owd)
+{
+	setenv("OLDPWD", owd, 1);
+	cwd = getcwd(cwd, MAX_PATH_LENGTH);
+	setenv("PWD", cwd, 1);
+	free(cwd);
+	free(owd);
+}
 
 /**
  * handle_cd - handles change directory command
@@ -50,11 +62,7 @@ void  handle_cd(char **command, char *program)
 			panic(_strncat("can't cd to ", path), command, program, 0);
 		}
 	}
-	setenv("OLDPWD", owd, 1);
-	cwd = getcwd(cwd, MAX_PATH_LENGTH);
-	setenv("PWD", cwd, 1);
-	free(cwd);
-	free(owd);
+	_exit_cd(cwd, owd);
 }
 
 /**
