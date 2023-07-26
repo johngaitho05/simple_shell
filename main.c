@@ -1,6 +1,17 @@
 #include "main.h"
 
 /**
+ * terminate - terminates the program
+ * @line: user input buffer
+ */
+void terminate(char *line)
+{
+	unsetenv("EXIT_CODE");
+	if (line != NULL)
+		free(line);
+}
+
+/**
  * main - entry point for the shell
  * @argc: number of args
  * @argv: command line arguments
@@ -16,6 +27,8 @@ int main(int argc __attribute__((unused)),
 
 	if (!interactive)
 		program = argv[0];
+	else
+		_puts("$", STDOUT_FILENO, 0);
 	/* Loop until the user terminates with Ctrl + D */
 	while (_getline(&line, &len, stdin) != -1)
 	{
@@ -43,9 +56,8 @@ int main(int argc __attribute__((unused)),
 		}
 		unsetenv("EXIT_CODE");
 		i = 0;
+		_puts("$", STDOUT_FILENO, 0);
 	}
-	unsetenv("EXIT_CODE");
-	if (line != NULL)
-		free(line);
+	terminate(line);
 	return (0);
 }
